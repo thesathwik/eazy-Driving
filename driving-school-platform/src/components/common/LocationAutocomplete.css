@@ -1,0 +1,120 @@
+.location-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.location-autocomplete input {
+  width: 100%;
+  padding: var(--space-4);
+  border: 2px solid var(--secondary-200);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  font-family: var(--font-primary);
+  transition: all var(--transition-base);
+  background-color: var(--white);
+}
+
+.location-autocomplete input:focus {
+  outline: none;
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(61, 165, 217, 0.1);
+}
+
+.suggestions-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 2px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.suggestion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%);
+}
+
+.suggestion-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.suggestion-suburb {
+  font-weight: 600;
+  color: var(--primary-900);
+  font-size: var(--text-base);
+}
+
+.suggestion-state {
+  font-size: var(--text-xs);
+  color: var(--white);
+  background: var(--primary-600);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.suggestion-postcode {
+  font-size: var(--text-sm);
+  color: var(--secondary-600);
+  font-weight: 600;
+  font-family: monospace;
+}
+
+/* Custom scrollbar for suggestions list */
+.suggestions-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.suggestions-list::-webkit-scrollbar-track {
+  background: var(--secondary-100);
+  border-radius: var(--radius-lg);
+}
+
+.suggestions-list::-webkit-scrollbar-thumb {
+  background: var(--primary-400);
+  border-radius: var(--radius-lg);
+}
+
+.suggestions-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .suggestions-list {
+    max-height: 250px;
+  }
+
+  .suggestion-item {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .suggestion-suburb {
+    font-size: var(--text-sm);
+  }
+
+  .suggestion-postcode {
+    font-size: var(--text-xs);
+  }
+}

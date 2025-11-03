@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navigation from './components/common/Navigation';
 import Footer from './components/common/Footer';
@@ -13,28 +13,40 @@ import CompleteInstructorProfile from './pages/auth/CompleteInstructorProfile';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
 import './styles/global.css';
 
+function AppContent() {
+  const location = useLocation();
+
+  // Hide Navigation and Footer for dashboard pages
+  const isDashboard = location.pathname.startsWith('/instructor/dashboard') ||
+                      location.pathname.startsWith('/learner/dashboard');
+
+  return (
+    <div className="App">
+      {!isDashboard && <Navigation />}
+      <main className={isDashboard ? 'dashboard-layout' : ''}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/instructors" element={<Instructors />} />
+          <Route path="/login/learner" element={<LearnerLogin />} />
+          <Route path="/login/instructor" element={<InstructorLogin />} />
+          <Route path="/signup/learner" element={<LearnerSignup />} />
+          <Route path="/signup/instructor" element={<InstructorSignup />} />
+          <Route path="/instructor/complete-profile" element={<CompleteInstructorProfile />} />
+          <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+          <Route path="/signup" element={<LearnerSignup />} />
+          {/* Additional routes can be added here */}
+        </Routes>
+      </main>
+      {!isDashboard && <Footer />}
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
-          <Navigation />
-          <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/instructors" element={<Instructors />} />
-              <Route path="/login/learner" element={<LearnerLogin />} />
-              <Route path="/login/instructor" element={<InstructorLogin />} />
-              <Route path="/signup/learner" element={<LearnerSignup />} />
-              <Route path="/signup/instructor" element={<InstructorSignup />} />
-              <Route path="/instructor/complete-profile" element={<CompleteInstructorProfile />} />
-              <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
-              <Route path="/signup" element={<LearnerSignup />} />
-              {/* Additional routes can be added here */}
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <AppContent />
       </Router>
     </AuthProvider>
   );

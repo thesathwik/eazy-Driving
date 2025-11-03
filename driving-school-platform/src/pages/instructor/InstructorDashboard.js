@@ -62,25 +62,20 @@ const InstructorDashboard = () => {
       <div className="dashboard-main">
         <div className="dashboard-header">
           <h1>Dashboard</h1>
-        </div>
-
-        {/* Alert Banners */}
-        <div className="dashboard-alerts">
-          <div className="alert-banner alert-info">
-            <div className="alert-icon">★</div>
-            <div className="alert-content">
-              <strong>Your Test Package Service Fee Offer</strong>
+          <div className="dashboard-header-actions">
+            <button className="notifications-btn">
+              <span className="notification-icon">🔔</span>
+              <span>Notifications</span>
+            </button>
+            <div className="user-profile-dropdown">
+              <img
+                src="/api/placeholder/40/40"
+                alt={user?.firstName || 'User'}
+                className="user-avatar"
+              />
+              <span className="user-name">{user?.firstName || 'Sreenivas'}</span>
+              <span className="dropdown-arrow">▼</span>
             </div>
-            <button className="alert-toggle">▼</button>
-          </div>
-
-          <div className="alert-banner alert-warning">
-            <div className="alert-icon">⊙</div>
-            <div className="alert-content">
-              <strong>Your Photo</strong>
-              <p>If your profile photo is outdated, please send us a new one. <a href="/profile">Review your profile</a></p>
-            </div>
-            <button className="alert-close">×</button>
           </div>
         </div>
 
@@ -88,14 +83,26 @@ const InstructorDashboard = () => {
         <div className="bookings-header">
           <h2>Bookings</h2>
           <div className="bookings-actions">
-            <button className="btn-secondary-action">
-              <span className="btn-icon">+</span>
+            <button className="btn-secondary">
+              <span className="btn-icon">👤</span>
               Invite Learner
             </button>
-            <button className="btn-primary-action">
-              <span className="btn-icon">✚</span>
+            <button className="btn-primary">
+              <span className="btn-icon">🚗</span>
               Propose Booking
             </button>
+          </div>
+        </div>
+
+        {/* Pricing Alert Banner */}
+        <div className="dashboard-alerts">
+          <div className="alert-banner alert-pricing">
+            <div className="alert-icon">⚠️</div>
+            <div className="alert-content">
+              <strong>Is your price aligned with the market?</strong>
+              <p>Instructors with market aligned pricing get better visibility and attract more learners. Consider <a href="/pricing">Review your rate.</a></p>
+            </div>
+            <button className="alert-close">×</button>
           </div>
         </div>
 

@@ -4,64 +4,66 @@ import './InstructorCard.css';
 
 const InstructorCard = ({ instructor }) => {
   return (
-    <div className="instructor-card">
-      <div className="instructor-badge">
-        {instructor.verified && <span className="badge verified">✓ Verified</span>}
-        {instructor.topRated && <span className="badge top-rated">Top Rated</span>}
+    <div className="instructor-card-ez">
+      {/* Badges */}
+      <div className="instructor-badges">
+        {instructor.topInstructor && (
+          <span className="badge badge-top">🏆 Top Instructor</span>
+        )}
+        {instructor.highDemand && (
+          <span className="badge badge-demand">⚡ High Demand</span>
+        )}
       </div>
 
-      <div className="instructor-header">
-        <div className="instructor-avatar">
-          {instructor.avatar || instructor.name.charAt(0)}
+      {/* Profile and Car Photos */}
+      <div className="instructor-photos">
+        <div className="photo-circle instructor-photo">
+          <img
+            src={instructor.photo || '/api/placeholder/100/100'}
+            alt={instructor.name}
+          />
         </div>
-        <div className="instructor-info">
-          <h3>{instructor.name}</h3>
-          <div className="instructor-rating">
-            <span className="rating-stars">★ {instructor.rating}</span>
-            <span className="rating-count">({instructor.reviewCount} reviews)</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="instructor-details">
-        <div className="detail-item">
-          <span className="detail-label">Experience:</span>
-          <span className="detail-value">{instructor.experience} years</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Transmission:</span>
-          <span className="detail-value">{instructor.transmission}</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Location:</span>
-          <span className="detail-value">{instructor.location}</span>
-        </div>
-        <div className="detail-item">
-          <span className="detail-label">Vehicle:</span>
-          <span className="detail-value">{instructor.vehicle}</span>
+        <div className="photo-circle car-photo">
+          <img
+            src={instructor.carPhoto || '/api/placeholder/100/100'}
+            alt={`${instructor.vehicle} ${instructor.transmission}`}
+          />
         </div>
       </div>
 
-      <div className="instructor-specialties">
-        {instructor.specialties.map((specialty, index) => (
-          <span key={index} className="specialty-tag">
-            {specialty}
-          </span>
-        ))}
+      {/* Instructor Name */}
+      <h3 className="instructor-name">{instructor.name}</h3>
+
+      {/* Rating */}
+      <div className="instructor-rating-ez">
+        <span className="rating-stars">★</span>
+        <span className="rating-value">{instructor.rating}</span>
+        <span className="rating-dot">·</span>
+        <span className="rating-count">{instructor.reviewCount} Ratings</span>
       </div>
 
-      <div className="instructor-price">
-        <span className="price-label">From</span>
-        <span className="price-amount">${instructor.pricePerHour}</span>
-        <span className="price-unit">/hour</span>
+      {/* Completed Lessons */}
+      <div className="completed-lessons">
+        {instructor.completedLessons} Completed Lessons
       </div>
 
-      <div className="instructor-actions">
-        <Link to={`/instructor/${instructor.id}`} className="btn btn-view">
+      {/* Price */}
+      <div className="instructor-price-ez">
+        ${instructor.pricePerHour}/hr
+      </div>
+
+      {/* Book Button */}
+      <Link to={`/book/${instructor.id}`} className="btn-book-online">
+        Book Online Now
+      </Link>
+
+      {/* Action Buttons */}
+      <div className="instructor-actions-ez">
+        <Link to={`/instructor/${instructor.id}`} className="btn-action">
           View Profile
         </Link>
-        <Link to={`/book/${instructor.id}`} className="btn btn-book">
-          Book Now
+        <Link to={`/instructor/${instructor.id}/availability`} className="btn-action">
+          Availability
         </Link>
       </div>
     </div>

@@ -41,103 +41,89 @@ const Instructors = () => {
     applyFilters(filters);
   };
 
+  const [sortBy, setSortBy] = useState('rating');
+  const [quickFilter, setQuickFilter] = useState('');
+  const minPrice = filteredInstructors.length > 0
+    ? Math.min(...filteredInstructors.map(i => i.pricePerHour))
+    : 0;
+
   return (
-    <div className="instructors-page">
-      <div className="instructors-hero">
-        <div className="container">
-          <h1>Find Your Perfect Instructor</h1>
-          <p>Browse through {instructors.length}+ verified professional instructors across Australia</p>
+    <div className="instructors-page-ez">
+      <div className="container-ez">
+        {/* Breadcrumb */}
+        <div className="breadcrumb">
+          <span className="breadcrumb-item">🏠</span>
+          <span className="breadcrumb-separator">›</span>
+          <span className="breadcrumb-item">Search</span>
+          {filters.location && (
+            <>
+              <span className="breadcrumb-separator">›</span>
+              <span className="breadcrumb-item">{filters.location}</span>
+            </>
+          )}
         </div>
-      </div>
 
-      <div className="container">
-        <div className="instructors-layout">
-          <aside className="filters-sidebar">
-            <div className="filter-card">
-              <h3>Refine Your Search</h3>
-              <form onSubmit={handleSearch} className="filter-form">
-                <div className="filter-group">
-                  <label htmlFor="location-filter">Location</label>
-                  <LocationAutocomplete
-                    name="location"
-                    value={filters.location}
-                    onChange={handleFilterChange}
-                    placeholder="e.g. Sydney, Melbourne, Brisbane"
-                  />
-                </div>
+        {/* Quick Filters */}
+        <div className="quick-filters">
+          <button
+            className={`filter-btn ${quickFilter === 'rating' ? 'active' : ''}`}
+            onClick={() => setQuickFilter('rating')}
+          >
+            ⭐ Highest Rated
+          </button>
+          <button
+            className={`filter-btn ${quickFilter === 'available' ? 'active' : ''}`}
+            onClick={() => setQuickFilter('available')}
+          >
+            📅 Next Available
+          </button>
+          <button
+            className={`filter-btn ${quickFilter === 'price' ? 'active' : ''}`}
+            onClick={() => setQuickFilter('price')}
+          >
+            💰 Lowest Price
+          </button>
+          <button
+            className={`filter-btn ${quickFilter === 'soon' ? 'active' : ''}`}
+            onClick={() => setQuickFilter('soon')}
+          >
+            ⚡ Available Next 4 Days
+          </button>
+          <button
+            className={`filter-btn ${quickFilter === 'female' ? 'active' : ''}`}
+            onClick={() => setQuickFilter('female')}
+          >
+            👤 Female Instructor
+          </button>
 
-                <div className="filter-group">
-                  <label htmlFor="transmission-filter">Transmission</label>
-                  <select
-                    id="transmission-filter"
-                    name="transmission"
-                    value={filters.transmission}
-                    onChange={handleFilterChange}
-                  >
-                    <option value="automatic">Automatic</option>
-                    <option value="manual">Manual</option>
-                    <option value="both">Both</option>
-                  </select>
-                </div>
+          <div className="filters-right">
+            <button className="btn-filters">
+              🔧 Filters
+            </button>
+            <button className="btn-sort">
+              ↕️ Sort
+            </button>
+          </div>
+        </div>
 
-                <div className="filter-checkbox">
-                  <input
-                    type="checkbox"
-                    id="test-filter"
-                    name="testRequired"
-                    checked={filters.testRequired}
-                    onChange={handleFilterChange}
-                  />
-                  <label htmlFor="test-filter">Test package needed</label>
-                </div>
+        {/* Results Header */}
+        <div className="results-heading">
+          <h1>{filteredInstructors.length} {filters.transmission === 'automatic' ? 'Auto' : filters.transmission === 'manual' ? 'Manual' : ''} Instructors Available</h1>
+          <p className="results-price">from ${minPrice.toFixed(2)}/hr</p>
+        </div>
 
-                <button type="submit" className="btn btn-filter">
-                  Apply Filters
-                </button>
-              </form>
-
-              <div className="filter-info">
-                <h4>Why Choose EAZYDRIVING?</h4>
-                <ul>
-                  <li>All instructors verified</li>
-                  <li>Instant online booking</li>
-                  <li>Flexible scheduling</li>
-                  <li>Transparent pricing</li>
-                  <li>Real reviews from learners</li>
-                </ul>
-              </div>
+        {/* Instructors Grid */}
+        <div className="instructors-grid">
+          {filteredInstructors.length > 0 ? (
+            filteredInstructors.map(instructor => (
+              <InstructorCard key={instructor.id} instructor={instructor} />
+            ))
+          ) : (
+            <div className="no-results">
+              <h3>No instructors found</h3>
+              <p>Try adjusting your filters or search in a different area.</p>
             </div>
-          </aside>
-
-          <main className="instructors-main">
-            <div className="results-header">
-              <h2>
-                {filteredInstructors.length} Instructor{filteredInstructors.length !== 1 ? 's' : ''} Found
-              </h2>
-              <div className="sort-options">
-                <label htmlFor="sort">Sort by:</label>
-                <select id="sort">
-                  <option value="rating">Highest Rated</option>
-                  <option value="reviews">Most Reviews</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="instructors-list">
-              {filteredInstructors.length > 0 ? (
-                filteredInstructors.map(instructor => (
-                  <InstructorCard key={instructor.id} instructor={instructor} />
-                ))
-              ) : (
-                <div className="no-results">
-                  <h3>No instructors found</h3>
-                  <p>Try adjusting your filters or search in a different area.</p>
-                </div>
-              )}
-            </div>
-          </main>
+          )}
         </div>
       </div>
     </div>

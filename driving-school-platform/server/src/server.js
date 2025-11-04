@@ -31,6 +31,7 @@ app.use('/api/instructors', require('./routes/instructors'));
 app.use('/api/learners', require('./routes/learners'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/availability', require('./routes/availability'));
 
 // Health check route
 app.get('/health', (req, res) => {

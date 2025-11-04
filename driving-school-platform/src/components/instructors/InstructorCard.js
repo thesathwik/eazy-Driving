@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaTrophy, FaBolt, FaStar } from 'react-icons/fa';
 import './InstructorCard.css';
 
 const InstructorCard = ({ instructor }) => {
@@ -8,10 +9,10 @@ const InstructorCard = ({ instructor }) => {
       {/* Badges */}
       <div className="instructor-badges">
         {instructor.topInstructor && (
-          <span className="badge badge-top">🏆 Top Instructor</span>
+          <span className="badge badge-top"><FaTrophy /> Top Instructor</span>
         )}
         {instructor.highDemand && (
-          <span className="badge badge-demand">⚡ High Demand</span>
+          <span className="badge badge-demand"><FaBolt /> High Demand</span>
         )}
       </div>
 
@@ -36,7 +37,7 @@ const InstructorCard = ({ instructor }) => {
 
       {/* Rating */}
       <div className="instructor-rating-ez">
-        <span className="rating-stars">★</span>
+        <span className="rating-stars"><FaStar /></span>
         <span className="rating-value">{instructor.rating}</span>
         <span className="rating-dot">·</span>
         <span className="rating-count">{instructor.reviewCount} Ratings</span>

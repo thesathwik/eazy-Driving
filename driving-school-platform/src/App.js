@@ -5,6 +5,7 @@ import Navigation from './components/common/Navigation';
 import Footer from './components/common/Footer';
 import Home from './pages/Home';
 import Instructors from './pages/Instructors';
+import InstructorAvailability from './pages/InstructorAvailability';
 import LearnerLogin from './pages/auth/LearnerLogin';
 import InstructorLogin from './pages/auth/InstructorLogin';
 import LearnerSignup from './pages/auth/LearnerSignup';
@@ -27,6 +28,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/instructors" element={<Instructors />} />
+          <Route path="/instructor/:id/availability" element={<InstructorAvailability />} />
           <Route path="/login/learner" element={<LearnerLogin />} />
           <Route path="/login/instructor" element={<InstructorLogin />} />
           <Route path="/signup/learner" element={<LearnerSignup />} />

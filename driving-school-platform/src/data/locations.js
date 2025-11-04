@@ -39,17 +39,36 @@ export const australianLocations = [
 
   // QLD - Brisbane & Gold Coast
   { suburb: 'Brisbane City', postcode: '4000', state: 'QLD' },
+  { suburb: 'Sunnybank', postcode: '4109', state: 'QLD' },
   { suburb: 'Gold Coast', postcode: '4217', state: 'QLD' },
   { suburb: 'Sunshine Coast', postcode: '4558', state: 'QLD' },
-  { suburb: 'Toowoomba', postcode: '4350', state: 'QLD' },
-  { suburb: 'Cairns', postcode: '4870', state: 'QLD' },
-  { suburb: 'Townsville', postcode: '4810', state: 'QLD' },
-  { suburb: 'Ipswich', postcode: '4305', state: 'QLD' },
-  { suburb: 'Southport', postcode: '4215', state: 'QLD' },
-  { suburb: 'Surfers Paradise', postcode: '4217', state: 'QLD' },
   { suburb: 'Chermside', postcode: '4032', state: 'QLD' },
   { suburb: 'Logan', postcode: '4114', state: 'QLD' },
   { suburb: 'Redcliffe', postcode: '4020', state: 'QLD' },
+  { suburb: 'Southport', postcode: '4215', state: 'QLD' },
+  { suburb: 'Surfers Paradise', postcode: '4217', state: 'QLD' },
+
+  // QLD - Ipswich & Springfield Region (Service Area)
+  { suburb: 'Ipswich', postcode: '4305', state: 'QLD' },
+  { suburb: 'Springfield', postcode: '4300', state: 'QLD' },
+  { suburb: 'Springfield Lakes', postcode: '4300', state: 'QLD' },
+  { suburb: 'Spring Mountain', postcode: '4300', state: 'QLD' },
+  { suburb: 'Ripley', postcode: '4306', state: 'QLD' },
+  { suburb: 'Redbank Plains', postcode: '4301', state: 'QLD' },
+  { suburb: 'Richlands', postcode: '4077', state: 'QLD' },
+  { suburb: 'Forest Lake', postcode: '4078', state: 'QLD' },
+  { suburb: 'Camira', postcode: '4300', state: 'QLD' },
+  { suburb: 'Carole Park', postcode: '4300', state: 'QLD' },
+  { suburb: 'Greenbank', postcode: '4124', state: 'QLD' },
+  { suburb: 'New Beith', postcode: '4124', state: 'QLD' },
+  { suburb: 'White Rock', postcode: '4306', state: 'QLD' },
+  { suburb: 'Augustine Heights', postcode: '4300', state: 'QLD' },
+  { suburb: 'Brookwater', postcode: '4300', state: 'QLD' },
+
+  // QLD - Other Cities
+  { suburb: 'Toowoomba', postcode: '4350', state: 'QLD' },
+  { suburb: 'Cairns', postcode: '4870', state: 'QLD' },
+  { suburb: 'Townsville', postcode: '4810', state: 'QLD' },
 
   // SA - Adelaide
   { suburb: 'Adelaide', postcode: '5000', state: 'SA' },

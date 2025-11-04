@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import {
+  FaStar, FaCalendar, FaDollarSign, FaBolt,
+  FaUserFriends, FaSlidersH, FaSort, FaHome
+} from 'react-icons/fa';
 import InstructorCard from '../components/instructors/InstructorCard';
 import LocationAutocomplete from '../components/common/LocationAutocomplete';
 import { instructors, filterInstructors } from '../data/instructors';
@@ -52,7 +56,7 @@ const Instructors = () => {
       <div className="container-ez">
         {/* Breadcrumb */}
         <div className="breadcrumb">
-          <span className="breadcrumb-item">🏠</span>
+          <span className="breadcrumb-item"><FaHome /></span>
           <span className="breadcrumb-separator">›</span>
           <span className="breadcrumb-item">Search</span>
           {filters.location && (
@@ -69,39 +73,39 @@ const Instructors = () => {
             className={`filter-btn ${quickFilter === 'rating' ? 'active' : ''}`}
             onClick={() => setQuickFilter('rating')}
           >
-            ⭐ Highest Rated
+            <FaStar /> Highest Rated
           </button>
           <button
             className={`filter-btn ${quickFilter === 'available' ? 'active' : ''}`}
             onClick={() => setQuickFilter('available')}
           >
-            📅 Next Available
+            <FaCalendar /> Next Available
           </button>
           <button
             className={`filter-btn ${quickFilter === 'price' ? 'active' : ''}`}
             onClick={() => setQuickFilter('price')}
           >
-            💰 Lowest Price
+            <FaDollarSign /> Lowest Price
           </button>
           <button
             className={`filter-btn ${quickFilter === 'soon' ? 'active' : ''}`}
             onClick={() => setQuickFilter('soon')}
           >
-            ⚡ Available Next 4 Days
+            <FaBolt /> Available Next 4 Days
           </button>
           <button
             className={`filter-btn ${quickFilter === 'female' ? 'active' : ''}`}
             onClick={() => setQuickFilter('female')}
           >
-            👤 Female Instructor
+            <FaUserFriends /> Female Instructor
           </button>
 
           <div className="filters-right">
             <button className="btn-filters">
-              🔧 Filters
+              <FaSlidersH /> Filters
             </button>
             <button className="btn-sort">
-              ↕️ Sort
+              <FaSort /> Sort
             </button>
           </div>
         </div>

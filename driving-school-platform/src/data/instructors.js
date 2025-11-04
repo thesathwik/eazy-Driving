@@ -1,6 +1,6 @@
 export const instructors = [
   {
-    id: 1,
+    id: '690970ee0d71caf7292378d6',
     name: 'Rana',
     avatar: 'R',
     photo: '/api/placeholder/100/100',
@@ -9,11 +9,11 @@ export const instructors = [
     reviewCount: 63,
     completedLessons: 477,
     experience: 8,
-    transmission: 'Auto',
-    location: 'Sunnybank, QLD 4109',
+    transmission: 'Automatic',
+    location: 'Springfield Lakes, QLD 4300',
     vehicle: '2023 Toyota Corolla',
     specialties: ['Nervous learners', 'Test preparation', 'Highway driving'],
-    pricePerHour: 80,
+    pricePerHour: 65,
     verified: true,
     topRated: true,
     topInstructor: true,
@@ -21,7 +21,7 @@ export const instructors = [
     bio: 'Experienced instructor specializing in building confidence for nervous learners.'
   },
   {
-    id: 2,
+    id: '690970f30d71caf72923798b',
     name: 'Lee',
     avatar: 'L',
     photo: '/api/placeholder/100/100',
@@ -30,19 +30,19 @@ export const instructors = [
     reviewCount: 213,
     completedLessons: 2908,
     experience: 6,
-    transmission: 'Auto',
-    location: 'Sunnybank, QLD 4109',
+    transmission: 'Automatic',
+    location: 'Ipswich, QLD 4305',
     vehicle: '2022 Honda Civic',
     specialties: ['First-time drivers', 'Parking skills', 'Defensive driving'],
-    pricePerHour: 99,
+    pricePerHour: 70,
     verified: true,
     topRated: true,
     topInstructor: true,
-    highDemand: false,
+    highDemand: true,
     bio: 'Patient and friendly instructor with high first-time pass rates.'
   },
   {
-    id: 3,
+    id: '690970f50d71caf729237a35',
     name: 'Carl',
     avatar: 'C',
     photo: '/api/placeholder/100/100',
@@ -51,11 +51,11 @@ export const instructors = [
     reviewCount: 163,
     completedLessons: 2824,
     experience: 10,
-    transmission: 'Auto',
-    location: 'Sunnybank, QLD 4109',
+    transmission: 'Automatic',
+    location: 'Brookwater, QLD 4300',
     vehicle: '2023 Mazda 3',
     specialties: ['Manual transmission', 'Advanced techniques', 'Test routes'],
-    pricePerHour: 85,
+    pricePerHour: 68,
     verified: true,
     topRated: true,
     topInstructor: true,
@@ -63,7 +63,7 @@ export const instructors = [
     bio: 'Specialist in manual transmission with extensive test route knowledge.'
   },
   {
-    id: 4,
+    id: '690970f70d71caf729237adf',
     name: 'Eric',
     avatar: 'E',
     photo: '/api/placeholder/100/100',
@@ -72,11 +72,11 @@ export const instructors = [
     reviewCount: 11,
     completedLessons: 94,
     experience: 5,
-    transmission: 'Auto',
-    location: 'Sunnybank, QLD 4109',
+    transmission: 'Automatic',
+    location: 'Augustine Heights, QLD 4300',
     vehicle: '2023 Toyota Yaris',
     specialties: ['Nervous learners', 'Test preparation'],
-    pricePerHour: 79,
+    pricePerHour: 62,
     verified: true,
     topRated: false,
     topInstructor: false,
@@ -100,7 +100,7 @@ export const instructors = [
     bio: 'Enthusiastic instructor focused on making learning fun and effective.'
   },
   {
-    id: 5,
+    id: 6,
     name: 'David Kumar',
     avatar: 'D',
     rating: 4.8,
@@ -116,7 +116,7 @@ export const instructors = [
     bio: 'Specializing in mature age learners and refresher training.'
   },
   {
-    id: 6,
+    id: 7,
     name: 'Rachel Foster',
     avatar: 'R',
     rating: 4.9,
@@ -132,7 +132,7 @@ export const instructors = [
     bio: 'Female instructor offering intensive courses and comprehensive test prep.'
   },
   {
-    id: 7,
+    id: 8,
     name: 'Alex Patel',
     avatar: 'A',
     rating: 4.8,
@@ -148,7 +148,7 @@ export const instructors = [
     bio: 'Experienced instructor with excellent test pass rates in Perth metro area.'
   },
   {
-    id: 8,
+    id: 9,
     name: 'Jessica Lee',
     avatar: 'J',
     rating: 4.9,
@@ -164,7 +164,7 @@ export const instructors = [
     bio: 'Eastern suburbs specialist with extensive local knowledge and high success rates.'
   },
   {
-    id: 9,
+    id: 10,
     name: 'Mohammed Hassan',
     avatar: 'M',
     rating: 4.7,
@@ -180,7 +180,7 @@ export const instructors = [
     bio: 'Canberra-based instructor specializing in manual transmission and roundabouts.'
   },
   {
-    id: 10,
+    id: 11,
     name: 'Sarah Williams',
     avatar: 'S',
     rating: 4.8,
@@ -196,7 +196,7 @@ export const instructors = [
     bio: 'Gold Coast instructor with patience and expertise for mature age learners.'
   },
   {
-    id: 11,
+    id: 12,
     name: 'Tom Richards',
     avatar: 'T',
     rating: 4.9,
@@ -212,7 +212,7 @@ export const instructors = [
     bio: 'Highly experienced instructor serving Geelong and surrounding regional areas.'
   },
   {
-    id: 12,
+    id: 13,
     name: 'Lisa Nguyen',
     avatar: 'L',
     rating: 4.8,
@@ -230,20 +230,47 @@ export const instructors = [
 ];
 
 export const getInstructorById = (id) => {
-  return instructors.find(instructor => instructor.id === parseInt(id));
+  return instructors.find(instructor => instructor.id.toString() === id.toString());
 };
 
 export const filterInstructors = (filters) => {
   return instructors.filter(instructor => {
-    if (filters.location && !instructor.location.toLowerCase().includes(filters.location.toLowerCase())) {
-      return false;
-    }
-    if (filters.transmission && filters.transmission !== 'both') {
-      if (instructor.transmission.toLowerCase() !== 'both' &&
-          instructor.transmission.toLowerCase() !== filters.transmission.toLowerCase()) {
+    // Location filter
+    if (filters.location && filters.location.trim() !== '') {
+      const instructorLocation = instructor.location.toLowerCase();
+      const searchLocation = filters.location.toLowerCase();
+      const locationMatches = instructorLocation.includes(searchLocation);
+
+      if (!locationMatches) {
         return false;
       }
     }
+
+    // Transmission filter
+    if (filters.transmission && filters.transmission !== 'both') {
+      const instructorTransmission = instructor.transmission.toLowerCase();
+      const searchTransmission = filters.transmission.toLowerCase();
+
+      // Normalize transmission types: "auto" matches "automatic", "manual" matches "manual"
+      const normalizeTransmission = (type) => {
+        if (type.includes('auto')) return 'auto';
+        if (type.includes('manual')) return 'manual';
+        if (type === 'both') return 'both';
+        return type;
+      };
+
+      const normalizedInstructor = normalizeTransmission(instructorTransmission);
+      const normalizedSearch = normalizeTransmission(searchTransmission);
+
+      const transmissionMatches =
+        normalizedInstructor === 'both' ||
+        normalizedInstructor === normalizedSearch;
+
+      if (!transmissionMatches) {
+        return false;
+      }
+    }
+
     return true;
   });
 };

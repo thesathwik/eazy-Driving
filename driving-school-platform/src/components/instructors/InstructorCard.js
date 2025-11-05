@@ -60,10 +60,10 @@ const InstructorCard = ({ instructor }) => {
 
       {/* Action Buttons */}
       <div className="instructor-actions-ez">
-        <Link to={`/instructor/${instructor.id}`} className="btn-action">
+        <Link to={`/instructors/${instructor.id}`} className="btn-action">
           View Profile
         </Link>
-        <Link to={`/instructor/${instructor.id}/availability`} className="btn-action">
+        <Link to={`/instructors/${instructor.id}/availability`} className="btn-action">
           Availability
         </Link>
       </div>

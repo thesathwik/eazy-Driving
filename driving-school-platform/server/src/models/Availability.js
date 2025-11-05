@@ -66,13 +66,13 @@ availabilitySchema.methods.cancelTimeSlot = function(time) {
   return false;
 };
 
-// Static method to generate default time slots
+// Static method to generate default time slots (5am - 9pm)
 availabilitySchema.statics.generateDefaultTimeSlots = function() {
   const slots = [];
   const times = [
-    '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM',
-    '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM',
-    '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'
+    '5:00 AM', '6:00 AM', '7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM',
+    '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM',
+    '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM'
   ];
 
   times.forEach(time => {

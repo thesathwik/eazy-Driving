@@ -1,106 +1,151 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FaArrowLeft, FaCalendarAlt, FaClock, FaStar, FaMapMarkerAlt, FaSpinner } from 'react-icons/fa';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 import { getInstructorById } from '../data/instructors';
 import './InstructorAvailability.css';
 
 const InstructorAvailability = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const instructor = getInstructorById(id);
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [availabilityData, setAvailabilityData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // Fetch real-time availability data from backend
+  // Generate time slots from 5am to 9pm
+  const timeSlots = [
+    '5am', '6am', '7am', '8am', '9am', '10am', '11am',
+    '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm'
+  ];
+
+  // Convert time slot to API format (e.g., "8am" -> "8:00 AM")
+  const convertToApiFormat = (time) => {
+    const hour = parseInt(time);
+    const period = time.includes('pm') ? 'PM' : 'AM';
+    const displayHour = hour === 12 ? 12 : (period === 'PM' && hour !== 12) ? hour : hour;
+    return `${displayHour}:00 ${period}`;
+  };
+
+  // Fetch availability data
   useEffect(() => {
     const fetchAvailability = async () => {
       if (!instructor) return;
 
       try {
         setLoading(true);
-        setError(null);
+        const weekEnd = new Date(currentWeekStart);
+        weekEnd.setDate(weekEnd.getDate() + 7);
 
-        const today = new Date();
-        const endDate = new Date(today);
-        endDate.setDate(today.getDate() + 14);
-
-        const startDateStr = today.toISOString().split('T')[0];
-        const endDateStr = endDate.toISOString().split('T')[0];
+        const startDateStr = currentWeekStart.toISOString().split('T')[0];
+        const endDateStr = weekEnd.toISOString().split('T')[0];
 
         const response = await fetch(
           `${process.env.REACT_APP_API_URL}/availability/instructor/${instructor.id}?startDate=${startDateStr}&endDate=${endDateStr}`
         );
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch availability');
+        if (response.ok) {
+          const data = await response.json();
+          setAvailabilityData(data.data || []);
         }
-
-        const data = await response.json();
-        setAvailabilityData(data.data || []);
       } catch (err) {
         console.error('Error fetching availability:', err);
-        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchAvailability();
-  }, [instructor]);
+  }, [instructor, currentWeekStart]);
 
-  // Generate next 14 days
-  const generateDates = () => {
-    const dates = [];
-    const today = new Date();
+  // Get week days starting from current week start
+  const getWeekDays = () => {
+    const days = [];
+    const start = new Date(currentWeekStart);
 
-    for (let i = 0; i < 14; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date);
+    // Adjust to Monday
+    const day = start.getDay();
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+    start.setDate(diff);
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      days.push(date);
     }
-
-    return dates;
+    return days;
   };
 
-  // Get time slots for selected date
-  const getTimeSlotsForDate = (date) => {
-    if (!date) return [];
+  const weekDays = getWeekDays();
 
+  // Format date for display
+  const formatDate = (date) => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return `${days[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}`;
+  };
+
+  // Format week range
+  const formatWeekRange = () => {
+    const start = weekDays[0];
+    const end = weekDays[6];
+    return `${start.getDate()} - ${end.getDate()} ${start.toLocaleString('default', { month: 'short' })} ${start.getFullYear()}`;
+  };
+
+  // Check if a time slot is available for a specific date
+  const isSlotAvailable = (date, time) => {
     const dateStr = date.toISOString().split('T')[0];
     const availability = availabilityData.find(
       (avail) => new Date(avail.date).toISOString().split('T')[0] === dateStr
     );
 
-    return availability ? availability.timeSlots : [];
+    if (!availability) return false;
+
+    const apiTime = convertToApiFormat(time);
+    const slot = availability.timeSlots.find(s => s.time === apiTime);
+    return slot ? slot.available : false;
   };
 
-  const dates = generateDates();
-  const timeSlots = getTimeSlotsForDate(selectedDate);
-
-  const formatDate = (date) => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    return {
-      day: days[date.getDay()],
-      date: date.getDate(),
-      month: months[date.getMonth()],
-      full: date.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    };
+  // Navigate weeks
+  const goToPreviousWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(newDate.getDate() - 7);
+    setCurrentWeekStart(newDate);
   };
 
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
+  const goToNextWeek = () => {
+    const newDate = new Date(currentWeekStart);
+    newDate.setDate(newDate.getDate() + 7);
+    setCurrentWeekStart(newDate);
+  };
+
+  const goToToday = () => {
+    setCurrentWeekStart(new Date());
+  };
+
+  // Handle slot click
+  const handleSlotClick = (date, time) => {
+    if (isSlotAvailable(date, time)) {
+      setSelectedSlot({ date, time });
+    }
+  };
+
+  // Handle booking
+  const handleBooking = () => {
+    if (selectedSlot) {
+      navigate(`/book/${instructor.id}`, {
+        state: {
+          date: selectedSlot.date,
+          time: convertToApiFormat(selectedSlot.time)
+        }
+      });
+    }
   };
 
   if (!instructor) {
     return (
-      <div className="availability-page">
-        <div className="container">
+      <div className="availability-modal">
+        <div className="availability-content">
           <h2>Instructor not found</h2>
           <Link to="/instructors" className="btn-back">Back to Instructors</Link>
         </div>
@@ -109,150 +154,102 @@ const InstructorAvailability = () => {
   }
 
   return (
-    <div className="availability-page">
-      <div className="container">
-        {/* Back Button */}
-        <Link to="/instructors" className="btn-back-link">
-          <FaArrowLeft /> Back to Search
-        </Link>
+    <div className="availability-modal">
+      <div className="availability-content">
+        {/* Header */}
+        <div className="availability-modal-header">
+          <h2>
+            To begin the booking process please select "Book with {instructor.name}".
+          </h2>
+          <button className="btn-close" onClick={() => navigate('/instructors')}>
+            <FaTimes />
+          </button>
+        </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="loading-state">
-            <FaSpinner className="spinner" />
+        {/* Legend */}
+        <div className="availability-legend">
+          <div className="legend-item">
+            <span className="legend-circle available"></span>
+            <span>Available</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-circle unavailable"></span>
+            <span>Closed / booked out</span>
+          </div>
+        </div>
+
+        {/* Week Navigation */}
+        <div className="week-navigation">
+          <button className="btn-nav" onClick={goToPreviousWeek}>
+            <FaChevronLeft />
+          </button>
+          <button className="btn-today" onClick={goToToday}>
+            Today
+          </button>
+          <span className="week-range">{formatWeekRange()}</span>
+          <button className="btn-nav" onClick={goToNextWeek}>
+            <FaChevronRight />
+          </button>
+        </div>
+
+        {/* Calendar Grid */}
+        {loading ? (
+          <div className="calendar-loading">
             <p>Loading availability...</p>
           </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="error-state">
-            <p>Unable to load availability. Please try again later.</p>
-            <button onClick={() => window.location.reload()} className="btn-retry">
-              Retry
-            </button>
-          </div>
-        )}
-
-        {/* Instructor Header */}
-        <div className="availability-header">
-          <div className="instructor-info-header">
-            <div className="instructor-avatar-large">
-              {instructor.avatar}
-            </div>
-            <div className="instructor-details-header">
-              <h1>{instructor.name}</h1>
-              <div className="instructor-meta">
-                <span className="rating">
-                  <FaStar /> {instructor.rating} ({instructor.reviewCount} reviews)
-                </span>
-                <span className="location">
-                  <FaMapMarkerAlt /> {instructor.location}
-                </span>
-                <span className="vehicle">
-                  {instructor.vehicle} - {instructor.transmission}
-                </span>
-              </div>
-              <div className="price-large">
-                ${instructor.pricePerHour}/hr
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Availability Section */}
-        <div className="availability-section">
-          <h2><FaCalendarAlt /> Select a Date</h2>
-
-          {/* Date Selector */}
-          <div className="date-selector">
-            {dates.map((date, index) => {
-              const formatted = formatDate(date);
-              const selected = selectedDate && date.toDateString() === selectedDate.toDateString();
-
-              return (
-                <button
-                  key={index}
-                  className={`date-card ${selected ? 'selected' : ''} ${isToday(date) ? 'today' : ''}`}
-                  onClick={() => {
-                    setSelectedDate(date);
-                    setSelectedTime(null);
-                  }}
-                >
-                  <div className="date-day">{formatted.day}</div>
-                  <div className="date-number">{formatted.date}</div>
-                  <div className="date-month">{formatted.month}</div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Time Slots */}
-          {selectedDate && !loading && (
-            <div className="time-slots-section">
-              <h3><FaClock /> Available Times for {formatDate(selectedDate).full}</h3>
-
-              {timeSlots.length > 0 ? (
-                <div className="time-slots-grid">
-                  {timeSlots.map((slot, index) => (
-                    <button
-                      key={index}
-                      className={`time-slot ${!slot.available ? 'unavailable' : ''} ${
-                        selectedTime === slot.time ? 'selected' : ''
-                      }`}
-                      disabled={!slot.available}
-                      onClick={() => setSelectedTime(slot.time)}
-                    >
-                      {slot.time}
-                      {!slot.available && <span className="booked-label">Booked</span>}
-                    </button>
+        ) : (
+          <div className="calendar-grid">
+            <table className="calendar-table">
+              <thead>
+                <tr>
+                  <th className="time-column"></th>
+                  {weekDays.map((day, index) => (
+                    <th key={index} className="day-column">
+                      {formatDate(day)}
+                    </th>
                   ))}
-                </div>
-              ) : (
-                <div className="no-availability">
-                  <p>No availability set for this date. Please check other dates or contact the instructor.</p>
-                </div>
-              )}
-            </div>
-          )}
+                </tr>
+              </thead>
+              <tbody>
+                {timeSlots.map((time, timeIndex) => (
+                  <tr key={timeIndex}>
+                    <td className="time-cell">{time}</td>
+                    {weekDays.map((day, dayIndex) => {
+                      const available = isSlotAvailable(day, time);
+                      const isSelected = selectedSlot &&
+                        selectedSlot.date.toDateString() === day.toDateString() &&
+                        selectedSlot.time === time;
 
-          {/* Booking Summary */}
-          {selectedDate && selectedTime && (
-            <div className="booking-summary">
-              <h3>Booking Summary</h3>
-              <div className="summary-details">
-                <div className="summary-row">
-                  <span>Instructor:</span>
-                  <strong>{instructor.name}</strong>
-                </div>
-                <div className="summary-row">
-                  <span>Date:</span>
-                  <strong>{formatDate(selectedDate).full}</strong>
-                </div>
-                <div className="summary-row">
-                  <span>Time:</span>
-                  <strong>{selectedTime}</strong>
-                </div>
-                <div className="summary-row">
-                  <span>Duration:</span>
-                  <strong>1 hour</strong>
-                </div>
-                <div className="summary-row total">
-                  <span>Total:</span>
-                  <strong>${instructor.pricePerHour}</strong>
-                </div>
-              </div>
+                      return (
+                        <td
+                          key={dayIndex}
+                          className={`slot-cell ${available ? 'available' : 'unavailable'} ${isSelected ? 'selected' : ''}`}
+                          onClick={() => handleSlotClick(day, time)}
+                        >
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-              <Link
-                to={`/book/${instructor.id}`}
-                state={{ date: selectedDate, time: selectedTime }}
-                className="btn-continue-booking"
-              >
-                Continue to Booking
-              </Link>
-            </div>
-          )}
+        {/* Footer Notes */}
+        <div className="calendar-footer">
+          <p>• Driving lesson duration = 1 hour or 2 hours</p>
+          <p>• Driving test package duration = 2.5 hours</p>
         </div>
+
+        {/* Book Button */}
+        <button
+          className="btn-book-instructor"
+          onClick={handleBooking}
+          disabled={!selectedSlot}
+        >
+          Book with {instructor.name} <FaChevronRight />
+        </button>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   FaChevronDown, FaChevronUp
 } from 'react-icons/fa';
 import { getInstructorById } from '../data/instructors';
+import ServiceAreaMap from '../components/maps/ServiceAreaMap';
 import './InstructorProfile.css';
 
 const InstructorProfile = () => {
@@ -333,7 +334,7 @@ const InstructorProfile = () => {
                 </button>
                 {showServiceArea && (
                   <div className="service-area-map">
-                    <p>Service area map would appear here</p>
+                    <ServiceAreaMap location={instructor.location} />
                     <p className="service-note">Instructor service area in yellow.</p>
                   </div>
                 )}

@@ -49,7 +49,7 @@ const LearnerLogin = () => {
     setIsLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password, 'learner');
 
       if (result.success) {
         navigate('/');

@@ -48,10 +48,10 @@ const InstructorLogin = () => {
     setIsLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await login(formData.email, formData.password, 'instructor');
 
       if (result.success) {
-        navigate('/');
+        navigate('/instructor/dashboard');
       } else {
         if (result.field) {
           setErrors({ [result.field]: result.error });

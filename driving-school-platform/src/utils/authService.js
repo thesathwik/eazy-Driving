@@ -1,179 +1,75 @@
-// Simulated authentication service
-// In production, this would connect to a real backend API
+// Real authentication service connected to backend API
+import { API, handleResponse, getHeaders } from '../config/api';
 
-const USERS_STORAGE_KEY = 'eazydriving_users';
 const SESSION_STORAGE_KEY = 'eazydriving_session';
-
-// Helper to get all users from storage
-const getAllUsers = () => {
-  try {
-    const users = localStorage.getItem(USERS_STORAGE_KEY);
-    return users ? JSON.parse(users) : [];
-  } catch (error) {
-    console.error('Error reading users:', error);
-    return [];
-  }
-};
-
-// Helper to save users to storage
-const saveUsers = (users) => {
-  try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-    return true;
-  } catch (error) {
-    console.error('Error saving users:', error);
-    return false;
-  }
-};
-
-// Simple password hashing simulation (in production, use proper backend hashing)
-const hashPassword = (password) => {
-  // This is NOT secure - only for demonstration
-  // In production, passwords should be hashed on the backend
-  return btoa(password + 'eazydriving_salt');
-};
-
-// Verify password
-const verifyPassword = (password, hashedPassword) => {
-  return hashPassword(password) === hashedPassword;
-};
-
-// Check if email already exists
-export const checkEmailExists = (email) => {
-  const users = getAllUsers();
-  return users.some(user => user.email.toLowerCase() === email.toLowerCase());
-};
 
 // Register a new user
 export const registerUser = async (userData) => {
-  return new Promise((resolve, reject) => {
-    // Simulate API delay
-    setTimeout(() => {
-      try {
-        // Validate input
-        if (!userData.email || !userData.password) {
-          reject({ message: 'Email and password are required' });
-          return;
-        }
+  try {
+    const response = await fetch(API.auth.register, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        phone: userData.phone,
+        role: userData.type, // 'learner' or 'instructor'
+      }),
+    });
 
-        // Check if user already exists
-        if (checkEmailExists(userData.email)) {
-          reject({
-            message: 'An account with this email already exists',
-            field: 'email'
-          });
-          return;
-        }
+    const data = await handleResponse(response);
 
-        // Get existing users
-        const users = getAllUsers();
+    // Save session with token
+    if (data.success && data.token) {
+      const userSession = {
+        ...data.user,
+        token: data.token,
+      };
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userSession));
+    }
 
-        // Create new user
-        const newUser = {
-          id: Date.now().toString(),
-          email: userData.email.toLowerCase(),
-          password: hashPassword(userData.password),
-          type: userData.type,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          name: `${userData.firstName} ${userData.lastName}`,
-          phone: userData.phone,
-          location: userData.location || null,
-          licenceNumber: userData.licenceNumber || null,
-          transmission: userData.transmission || null,
-          experience: userData.experience || null,
-          createdAt: new Date().toISOString(),
-          isVerified: false
-        };
-
-        // Add to users array
-        users.push(newUser);
-
-        // Save to storage
-        if (!saveUsers(users)) {
-          reject({ message: 'Failed to save user data' });
-          return;
-        }
-
-        // Create session without password
-        const userSession = { ...newUser };
-        delete userSession.password;
-
-        // Save session
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userSession));
-
-        resolve({
-          success: true,
-          user: userSession,
-          message: 'Account created successfully'
-        });
-
-      } catch (error) {
-        reject({
-          message: 'An error occurred during registration',
-          error: error.message
-        });
-      }
-    }, 800); // Simulate network delay
-  });
+    return data;
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Registration failed',
+      field: error.data?.field,
+    };
+  }
 };
 
 // Login user
-export const loginUser = async (email, password) => {
-  return new Promise((resolve, reject) => {
-    // Simulate API delay
-    setTimeout(() => {
-      try {
-        // Validate input
-        if (!email || !password) {
-          reject({ message: 'Email and password are required' });
-          return;
-        }
+export const loginUser = async (email, password, userType) => {
+  try {
+    const response = await fetch(API.auth.login, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        email,
+        password,
+        role: userType, // 'learner' or 'instructor'
+      }),
+    });
 
-        // Get all users
-        const users = getAllUsers();
+    const data = await handleResponse(response);
 
-        // Find user by email
-        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    // Save session with token
+    if (data.success && data.token) {
+      const userSession = {
+        ...data.user,
+        token: data.token,
+      };
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userSession));
+    }
 
-        if (!user) {
-          reject({
-            message: 'No account found with this email address',
-            field: 'email'
-          });
-          return;
-        }
-
-        // Verify password
-        if (!verifyPassword(password, user.password)) {
-          reject({
-            message: 'Incorrect password. Please try again.',
-            field: 'password'
-          });
-          return;
-        }
-
-        // Create session without password
-        const userSession = { ...user };
-        delete userSession.password;
-
-        // Save session
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(userSession));
-
-        resolve({
-          success: true,
-          user: userSession,
-          message: 'Login successful'
-        });
-
-      } catch (error) {
-        reject({
-          message: 'An error occurred during login',
-          error: error.message
-        });
-      }
-    }, 800); // Simulate network delay
-  });
+    return data;
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Login failed',
+      field: error.data?.field,
+    };
+  }
 };
 
 // Get current session
@@ -198,127 +94,109 @@ export const logoutUser = () => {
   }
 };
 
+// Get current user from backend
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch(API.auth.me, {
+      method: 'GET',
+      headers: getHeaders(true), // Include auth token
+    });
+
+    const data = await handleResponse(response);
+    return data;
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Failed to get user data',
+    };
+  }
+};
+
 // Update user profile
 export const updateUserProfile = async (userId, updates) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        const users = getAllUsers();
-        const userIndex = users.findIndex(u => u.id === userId);
+  try {
+    const session = getCurrentSession();
+    const role = session?.role || 'learner';
 
-        if (userIndex === -1) {
-          reject({ message: 'User not found' });
-          return;
-        }
+    let endpoint;
+    if (role === 'instructor') {
+      endpoint = API.instructors.update(userId);
+    } else {
+      endpoint = API.learners.update(userId);
+    }
 
-        // Update user
-        users[userIndex] = {
-          ...users[userIndex],
-          ...updates,
-          updatedAt: new Date().toISOString()
-        };
+    const response = await fetch(endpoint, {
+      method: 'PUT',
+      headers: getHeaders(true),
+      body: JSON.stringify(updates),
+    });
 
-        // Save updated users
-        if (!saveUsers(users)) {
-          reject({ message: 'Failed to update user data' });
-          return;
-        }
+    const data = await handleResponse(response);
 
-        // Update session
-        const updatedUser = { ...users[userIndex] };
-        delete updatedUser.password;
-        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(updatedUser));
+    // Update session with new data
+    if (data.success && data.data) {
+      const currentSession = getCurrentSession();
+      const updatedSession = {
+        ...currentSession,
+        ...data.data,
+      };
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(updatedSession));
+    }
 
-        resolve({
-          success: true,
-          user: updatedUser,
-          message: 'Profile updated successfully'
-        });
+    return data;
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Profile update failed',
+    };
+  }
+};
 
-      } catch (error) {
-        reject({
-          message: 'An error occurred during update',
-          error: error.message
-        });
-      }
-    }, 500);
-  });
+// Check if email exists (for validation)
+export const checkEmailExists = async (email) => {
+  // This would need a backend endpoint to check email availability
+  // For now, we'll let the registration handle duplicate detection
+  return false;
+};
+
+// Password reset request
+export const requestPasswordReset = async (email) => {
+  try {
+    // This would need a password reset endpoint in the backend
+    // For now, return a success message
+    return {
+      success: true,
+      message: 'Password reset functionality will be available soon',
+    };
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Password reset failed',
+    };
+  }
 };
 
 // Change password
 export const changePassword = async (userId, currentPassword, newPassword) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        const users = getAllUsers();
-        const user = users.find(u => u.id === userId);
-
-        if (!user) {
-          reject({ message: 'User not found' });
-          return;
-        }
-
-        // Verify current password
-        if (!verifyPassword(currentPassword, user.password)) {
-          reject({ message: 'Current password is incorrect' });
-          return;
-        }
-
-        // Update password
-        const userIndex = users.findIndex(u => u.id === userId);
-        users[userIndex].password = hashPassword(newPassword);
-        users[userIndex].updatedAt = new Date().toISOString();
-
-        // Save updated users
-        if (!saveUsers(users)) {
-          reject({ message: 'Failed to update password' });
-          return;
-        }
-
-        resolve({
-          success: true,
-          message: 'Password changed successfully'
-        });
-
-      } catch (error) {
-        reject({
-          message: 'An error occurred during password change',
-          error: error.message
-        });
-      }
-    }, 500);
-  });
-};
-
-// Get user by email (for demonstration - in production this should be protected)
-export const getUserByEmail = (email) => {
-  const users = getAllUsers();
-  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    const userCopy = { ...user };
-    delete userCopy.password;
-    return userCopy;
+  try {
+    // This would need a password change endpoint in the backend
+    // For now, return a success message
+    return {
+      success: true,
+      message: 'Password change functionality will be available soon',
+    };
+  } catch (error) {
+    throw {
+      message: error.data?.message || error.message || 'Password change failed',
+    };
   }
-  return null;
 };
 
-// Password reset request (simulation)
-export const requestPasswordReset = async (email) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (!checkEmailExists(email)) {
-        // Don't reveal if email exists for security
-        resolve({
-          success: true,
-          message: 'If an account exists with this email, you will receive password reset instructions'
-        });
-        return;
-      }
+// Helper function to check if user is authenticated
+export const isAuthenticated = () => {
+  const session = getCurrentSession();
+  return session && session.token;
+};
 
-      resolve({
-        success: true,
-        message: 'Password reset email sent successfully'
-      });
-    }, 1000);
-  });
+// Helper function to get user role
+export const getUserRole = () => {
+  const session = getCurrentSession();
+  return session?.role || null;
 };

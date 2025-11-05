@@ -1,0 +1,816 @@
+/* Booking Flow Container */
+.booking-flow {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding: 40px 0;
+}
+
+/* Progress Steps */
+.booking-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48px;
+  padding: 0 20px;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  transition: all 0.3s;
+}
+
+.progress-step.active .step-circle {
+  background: #ffc107;
+  color: #1a1a1a;
+}
+
+.progress-step.current .step-circle {
+  background: #ffc107;
+  color: #1a1a1a;
+  box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+}
+
+.step-label {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  font-weight: 500;
+}
+
+.progress-step.active .step-label {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.progress-line {
+  width: 60px;
+  height: 2px;
+  background: #e0e0e0;
+  margin: 0 -10px;
+  margin-bottom: 30px;
+  transition: background 0.3s;
+}
+
+.progress-line.active {
+  background: #ffc107;
+}
+
+/* Booking Content */
+.booking-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.booking-step {
+  background: white;
+  border-radius: 12px;
+  padding: 48px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 0 20px;
+}
+
+.booking-step h1 {
+  font-size: 32px;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.step-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 32px 0;
+}
+
+/* Step 1: Instructor Card */
+.instructor-card-booking {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.instructor-header-booking {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.instructor-avatar-booking {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3da5d9 0%, #2980b9 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.instructor-info-booking h3 {
+  font-size: 24px;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.rating-booking {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.location-booking {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+}
+
+.instructor-details-booking {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.instructor-details-booking p {
+  margin: 0;
+  font-size: 15px;
+  color: #666;
+}
+
+/* Step 2: Amount Selection */
+.booking-step.booking-main-content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.booking-main-content > div:first-child {
+  background: white;
+  border-radius: 12px;
+  padding: 48px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-packages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.package-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.package-card:hover {
+  border-color: #3da5d9;
+}
+
+.package-card.selected {
+  border-color: #ffc107;
+  background: #fffbf0;
+}
+
+.package-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.radio-button {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #d0d0d0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.package-card.selected .radio-button {
+  border-color: #ffc107;
+}
+
+.radio-inner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.radio-inner.checked {
+  background: #ffc107;
+}
+
+.package-info {
+  flex: 1;
+}
+
+.package-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #1a1a1a;
+}
+
+.package-info p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.discount-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.discount-badge.green {
+  background: #10b981;
+  color: white;
+}
+
+/* Custom Hours Selector */
+.custom-hours-selector {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.custom-hours-selector label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.hours-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.hours-input:focus {
+  outline: none;
+  border-color: #3da5d9;
+}
+
+/* Lessons Info Box */
+.lessons-info-box {
+  background: #f0f9ff;
+  border-radius: 12px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.info-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instructor-illustration {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, #3da5d9 0%, #2980b9 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+  font-size: 60px;
+}
+
+.tip-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ffc107;
+  color: #1a1a1a;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.info-content h3 {
+  font-size: 20px;
+  margin: 0 0 20px 0;
+  color: #1a1a1a;
+}
+
+.lesson-recommendations {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recommendation {
+  display: grid;
+  grid-template-columns: 80px 140px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.recommendation:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.recommendation strong {
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.recommendation .category {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.recommendation .description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.best-value-badge {
+  background: #10b981;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Order Summary Sidebar */
+.order-summary {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.order-summary h2 {
+  font-size: 24px;
+  margin: 0 0 24px 0;
+  color: #1a1a1a;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.summary-item:first-child {
+  padding-top: 0;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.summary-item.discount .summary-value {
+  color: #10b981;
+}
+
+.discount-tag {
+  background: #10b981;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.summary-value.green {
+  color: #10b981;
+}
+
+.info-icon {
+  font-size: 14px;
+  color: #999;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 0 0;
+  margin-top: 16px;
+  border-top: 2px solid #1a1a1a;
+}
+
+.total-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.total-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.payment-plan {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin: 16px 0 0 0;
+}
+
+/* Buttons */
+.btn-continue {
+  width: 100%;
+  background: #ffc107;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+}
+
+.btn-continue:hover {
+  background: #ffb300;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.btn-continue-summary {
+  width: 100%;
+  background: #ffc107;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  margin-top: 24px;
+}
+
+.btn-continue-summary:hover {
+  background: #ffb300;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+/* Step 3: Book Your Lessons */
+.new-booking-section {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.booking-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.booking-section-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+.btn-remove-booking {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.btn-remove-booking:hover {
+  text-decoration: underline;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1a1a1a;
+}
+
+.booking-type-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.booking-type-tab {
+  background: white;
+  border: none;
+  border-right: 1px solid #e0e0e0;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.booking-type-tab:last-child {
+  border-right: none;
+}
+
+.booking-type-tab:hover {
+  background: #f9f9f9;
+}
+
+.booking-type-tab.active {
+  background: #e8f4f8;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.date-input,
+.time-select {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #666;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.date-input:focus,
+.time-select:focus {
+  outline: none;
+  border-color: #3da5d9;
+}
+
+.location-input-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.location-input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #666;
+  transition: border-color 0.2s;
+}
+
+.location-input:focus {
+  outline: none;
+  border-color: #3da5d9;
+}
+
+.btn-edit-location {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-edit-location:hover {
+  border-color: #3da5d9;
+  color: #3da5d9;
+}
+
+.btn-save-booking {
+  width: 100%;
+  background: #e0e0e0;
+  color: #999;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: not-allowed;
+  margin-top: 8px;
+}
+
+.btn-add-booking {
+  width: 100%;
+  background: white;
+  color: #666;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-top: 16px;
+}
+
+.btn-add-booking:hover {
+  border-color: #3da5d9;
+  color: #3da5d9;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .booking-step.booking-main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .order-summary {
+    position: static;
+  }
+
+  .lessons-info-box {
+    grid-template-columns: 1fr;
+  }
+
+  .info-illustration {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-progress {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .progress-step {
+    min-width: 80px;
+  }
+
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .step-label {
+    font-size: 12px;
+  }
+
+  .progress-line {
+    width: 40px;
+  }
+
+  .booking-step {
+    padding: 32px 24px;
+    margin: 0 16px;
+  }
+
+  .booking-step h1 {
+    font-size: 24px;
+  }
+
+  .booking-main-content > div:first-child {
+    padding: 32px 24px;
+  }
+
+  .order-summary {
+    padding: 24px;
+  }
+
+  .recommendation {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .best-value-badge {
+    width: fit-content;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-type-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-type-tab {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .booking-type-tab:last-child {
+    border-bottom: none;
+  }
+
+  .new-booking-section {
+    padding: 24px;
+  }
+}

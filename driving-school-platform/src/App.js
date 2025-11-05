@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Instructors from './pages/Instructors';
 import InstructorProfile from './pages/InstructorProfile';
 import InstructorAvailability from './pages/InstructorAvailability';
+import BookingFlow from './pages/BookingFlow';
 import LearnerLogin from './pages/auth/LearnerLogin';
 import InstructorLogin from './pages/auth/InstructorLogin';
 import LearnerSignup from './pages/auth/LearnerSignup';
@@ -31,6 +32,7 @@ function AppContent() {
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/instructors/:id" element={<InstructorProfile />} />
           <Route path="/instructors/:id/availability" element={<InstructorAvailability />} />
+          <Route path="/book/:id" element={<BookingFlow />} />
           <Route path="/login/learner" element={<LearnerLogin />} />
           <Route path="/login/instructor" element={<InstructorLogin />} />
           <Route path="/signup/learner" element={<LearnerSignup />} />

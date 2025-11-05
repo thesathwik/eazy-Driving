@@ -31,9 +31,9 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, userType = 'learner') => {
     try {
-      const response = await loginService(email, password);
+      const response = await loginService(email, password, userType);
       setUser(response.user);
       return { success: true, user: response.user };
     } catch (error) {
@@ -88,8 +88,8 @@ export const AuthProvider = ({ children }) => {
     updateProfile,
     updatePassword,
     isAuthenticated: !!user,
-    isLearner: user?.type === 'learner',
-    isInstructor: user?.type === 'instructor'
+    isLearner: user?.role === 'learner' || user?.type === 'learner',
+    isInstructor: user?.role === 'instructor' || user?.type === 'instructor'
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

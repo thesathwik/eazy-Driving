@@ -2,7 +2,7 @@
 .booking-flow {
   min-height: 100vh;
   background-color: #f5f5f5;
-  padding: 40px 0;
+  padding: 120px 0 40px 0; /* Added top padding to clear fixed navbar */
 }
 
 /* Progress Steps */
@@ -744,6 +744,10 @@
 }
 
 @media (max-width: 768px) {
+  .booking-flow {
+    padding: 100px 0 40px 0; /* Adjust for smaller navbar on mobile */
+  }
+
   .booking-progress {
     overflow-x: auto;
     justify-content: flex-start;

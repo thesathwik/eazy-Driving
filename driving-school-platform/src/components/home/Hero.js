@@ -7,8 +7,7 @@ const Hero = () => {
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState({
     location: '',
-    transmission: 'automatic',
-    testRequired: false
+    transmission: 'automatic'
   });
 
   const handleInputChange = (e) => {
@@ -95,19 +94,6 @@ const Hero = () => {
                 <option value="manual">Manual</option>
                 <option value="both">Both</option>
               </select>
-            </div>
-
-            <div className="form-checkbox">
-              <input
-                type="checkbox"
-                id="testRequired"
-                name="testRequired"
-                checked={searchData.testRequired}
-                onChange={handleInputChange}
-              />
-              <label htmlFor="testRequired">
-                I need a test package (includes vehicle)
-              </label>
             </div>
 
             <button type="submit" className="btn btn-search">

@@ -18,7 +18,13 @@ export const instructors = [
     topRated: true,
     topInstructor: true,
     highDemand: false,
-    bio: 'Experienced instructor specializing in building confidence for nervous learners.'
+    bio: 'Experienced instructor specializing in building confidence for nervous learners.',
+    nextAvailableDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Bengali'],
+    testCentres: ['Ipswich', 'Springfield']
   },
   {
     id: '690970f30d71caf72923798b',
@@ -39,7 +45,13 @@ export const instructors = [
     topRated: true,
     topInstructor: true,
     highDemand: true,
-    bio: 'Patient and friendly instructor with high first-time pass rates.'
+    bio: 'Patient and friendly instructor with high first-time pass rates.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Cantonese'],
+    testCentres: ['Ipswich', 'Goodna']
   },
   {
     id: '690970f50d71caf729237a35',
@@ -60,7 +72,13 @@ export const instructors = [
     topRated: true,
     topInstructor: true,
     highDemand: true,
-    bio: 'Specialist in manual transmission with extensive test route knowledge.'
+    bio: 'Specialist in manual transmission with extensive test route knowledge.',
+    nextAvailableDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['PM'],
+    gender: 'Male',
+    languages: ['English'],
+    testCentres: ['Ipswich', 'Springfield', 'Goodna']
   },
   {
     id: '690970f70d71caf729237adf',
@@ -81,7 +99,13 @@ export const instructors = [
     topRated: false,
     topInstructor: false,
     highDemand: false,
-    bio: 'Friendly and patient instructor focused on building confidence.'
+    bio: 'Friendly and patient instructor focused on building confidence.',
+    nextAvailableDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM'],
+    gender: 'Male',
+    languages: ['English'],
+    testCentres: ['Springfield']
   },
   {
     id: 5,
@@ -97,7 +121,13 @@ export const instructors = [
     pricePerHour: 58,
     verified: true,
     topRated: false,
-    bio: 'Enthusiastic instructor focused on making learning fun and effective.'
+    bio: 'Enthusiastic instructor focused on making learning fun and effective.',
+    nextAvailableDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English'],
+    testCentres: ['Blacktown', 'Parramatta']
   },
   {
     id: 6,
@@ -113,7 +143,13 @@ export const instructors = [
     pricePerHour: 62,
     verified: true,
     topRated: true,
-    bio: 'Specializing in mature age learners and refresher training.'
+    bio: 'Specializing in mature age learners and refresher training.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Hindi'],
+    testCentres: ['Adelaide CBD', 'Regency Park']
   },
   {
     id: 7,
@@ -129,7 +165,13 @@ export const instructors = [
     pricePerHour: 68,
     verified: true,
     topRated: true,
-    bio: 'Female instructor offering intensive courses and comprehensive test prep.'
+    bio: 'Female instructor offering intensive courses and comprehensive test prep.',
+    nextAvailableDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English'],
+    testCentres: ['Penrith', 'Parramatta']
   },
   {
     id: 8,
@@ -145,7 +187,13 @@ export const instructors = [
     pricePerHour: 63,
     verified: true,
     topRated: true,
-    bio: 'Experienced instructor with excellent test pass rates in Perth metro area.'
+    bio: 'Experienced instructor with excellent test pass rates in Perth metro area.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Hindi', 'Gujarati'],
+    testCentres: ['Perth CBD', 'Joondalup']
   },
   {
     id: 9,
@@ -161,7 +209,13 @@ export const instructors = [
     pricePerHour: 72,
     verified: true,
     topRated: true,
-    bio: 'Eastern suburbs specialist with extensive local knowledge and high success rates.'
+    bio: 'Eastern suburbs specialist with extensive local knowledge and high success rates.',
+    nextAvailableDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM'],
+    gender: 'Female',
+    languages: ['English', 'Korean'],
+    testCentres: ['Botany', 'Kogarah']
   },
   {
     id: 10,
@@ -177,7 +231,13 @@ export const instructors = [
     pricePerHour: 66,
     verified: true,
     topRated: true,
-    bio: 'Canberra-based instructor specializing in manual transmission and roundabouts.'
+    bio: 'Canberra-based instructor specializing in manual transmission and roundabouts.',
+    nextAvailableDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Arabic'],
+    testCentres: ['Canberra City', 'Belconnen']
   },
   {
     id: 11,
@@ -193,7 +253,13 @@ export const instructors = [
     pricePerHour: 64,
     verified: true,
     topRated: true,
-    bio: 'Gold Coast instructor with patience and expertise for mature age learners.'
+    bio: 'Gold Coast instructor with patience and expertise for mature age learners.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['PM'],
+    gender: 'Female',
+    languages: ['English'],
+    testCentres: ['Southport', 'Nerang']
   },
   {
     id: 12,
@@ -209,7 +275,13 @@ export const instructors = [
     pricePerHour: 61,
     verified: true,
     topRated: true,
-    bio: 'Highly experienced instructor serving Geelong and surrounding regional areas.'
+    bio: 'Highly experienced instructor serving Geelong and surrounding regional areas.',
+    nextAvailableDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English'],
+    testCentres: ['Geelong']
   },
   {
     id: 13,
@@ -225,7 +297,235 @@ export const instructors = [
     pricePerHour: 67,
     verified: true,
     topRated: true,
-    bio: 'Patient North Shore instructor specializing in building confidence for nervous learners.'
+    bio: 'Patient North Shore instructor specializing in building confidence for nervous learners.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English', 'Vietnamese', 'Cantonese'],
+    testCentres: ['Chatswood', 'Frenchs Forest']
+  },
+  // Additional instructors to increase variety
+  {
+    id: 14,
+    name: 'Priya Sharma',
+    avatar: 'P',
+    rating: 4.7,
+    reviewCount: 89,
+    experience: 5,
+    transmission: 'Automatic',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Hyundai Accent',
+    specialties: ['Multilingual instruction', 'Beginner friendly', 'Highway driving'],
+    pricePerHour: 60,
+    verified: true,
+    topRated: false,
+    bio: 'Multilingual instructor specializing in working with international students.',
+    nextAvailableDate: new Date(Date.now() + 0.5 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English', 'Hindi', 'Punjabi'],
+    testCentres: ['Sunnybank', 'Mt Gravatt']
+  },
+  {
+    id: 15,
+    name: 'James Chen',
+    avatar: 'J',
+    rating: 4.9,
+    reviewCount: 176,
+    experience: 8,
+    transmission: 'Both',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2022 Mazda 3',
+    specialties: ['Test preparation', 'Parallel parking', 'Defensive driving'],
+    pricePerHour: 66,
+    verified: true,
+    topRated: true,
+    bio: 'Experienced instructor with exceptional test pass rates in Brisbane south.',
+    nextAvailableDate: new Date(Date.now() + 1.5 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['PM'],
+    gender: 'Male',
+    languages: ['English', 'Mandarin'],
+    testCentres: ['Sunnybank', 'Mt Gravatt', 'Capalaba']
+  },
+  {
+    id: 16,
+    name: 'Emma Wilson',
+    avatar: 'E',
+    rating: 4.6,
+    reviewCount: 72,
+    experience: 4,
+    transmission: 'Automatic',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Toyota Yaris',
+    specialties: ['Young learners', 'Confidence building', 'City driving'],
+    pricePerHour: 59,
+    verified: true,
+    topRated: false,
+    bio: 'Young and enthusiastic instructor connecting well with teenage learners.',
+    nextAvailableDate: new Date(Date.now() + 0.8 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English'],
+    testCentres: ['Sunnybank', 'Mt Gravatt']
+  },
+  {
+    id: 17,
+    name: 'Ahmed Ali',
+    avatar: 'A',
+    rating: 4.8,
+    reviewCount: 121,
+    experience: 7,
+    transmission: 'Manual',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2022 Volkswagen Golf',
+    specialties: ['Manual transmission', 'Hill starts', 'Advanced techniques'],
+    pricePerHour: 64,
+    verified: true,
+    topRated: true,
+    bio: 'Manual transmission specialist with a focus on mastering challenging techniques.',
+    nextAvailableDate: new Date(Date.now() + 2.5 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Male',
+    languages: ['English', 'Arabic', 'Urdu'],
+    testCentres: ['Sunnybank', 'Capalaba']
+  },
+  {
+    id: 18,
+    name: 'Maria Rodriguez',
+    avatar: 'M',
+    rating: 4.7,
+    reviewCount: 94,
+    experience: 6,
+    transmission: 'Automatic',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Kia Rio',
+    specialties: ['Nervous learners', 'Mature age', 'Patient instruction'],
+    pricePerHour: 61,
+    verified: true,
+    topRated: false,
+    bio: 'Patient and calm instructor perfect for anxious and mature age learners.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['AM'],
+    gender: 'Female',
+    languages: ['English', 'Spanish'],
+    testCentres: ['Mt Gravatt', 'Sunnybank']
+  },
+  {
+    id: 19,
+    name: 'Kevin Tan',
+    avatar: 'K',
+    rating: 4.9,
+    reviewCount: 203,
+    experience: 9,
+    transmission: 'Both',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Honda Civic',
+    specialties: ['Test packages', 'Quick learners', 'Intensive courses'],
+    pricePerHour: 69,
+    verified: true,
+    topRated: true,
+    highDemand: true,
+    bio: 'Top-rated instructor specializing in intensive test preparation packages.',
+    nextAvailableDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['PM'],
+    gender: 'Male',
+    languages: ['English', 'Mandarin', 'Cantonese'],
+    testCentres: ['Sunnybank', 'Mt Gravatt', 'Capalaba']
+  },
+  {
+    id: 20,
+    name: 'Olivia Brown',
+    avatar: 'O',
+    rating: 4.8,
+    reviewCount: 142,
+    experience: 7,
+    transmission: 'Automatic',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2022 Mazda 2',
+    specialties: ['Female instructor', 'Test preparation', 'Parking mastery'],
+    pricePerHour: 65,
+    verified: true,
+    topRated: true,
+    bio: 'Experienced female instructor with excellent parallel parking techniques.',
+    nextAvailableDate: new Date(Date.now() + 0.3 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English'],
+    testCentres: ['Sunnybank', 'Mt Gravatt']
+  },
+  {
+    id: 21,
+    name: 'Daniel Kim',
+    avatar: 'D',
+    rating: 4.6,
+    reviewCount: 81,
+    experience: 5,
+    transmission: 'Both',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Toyota Corolla',
+    specialties: ['Bilingual instruction', 'Highway confidence', 'Roundabouts'],
+    pricePerHour: 62,
+    verified: true,
+    topRated: false,
+    bio: 'Bilingual instructor offering clear and structured lesson plans.',
+    nextAvailableDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday'],
+    availabilityTimes: ['PM'],
+    gender: 'Male',
+    languages: ['English', 'Korean'],
+    testCentres: ['Sunnybank', 'Capalaba']
+  },
+  {
+    id: 22,
+    name: 'Samantha Lee',
+    avatar: 'S',
+    rating: 4.9,
+    reviewCount: 189,
+    experience: 8,
+    transmission: 'Automatic',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2023 Hyundai i30',
+    specialties: ['Test packages', 'Female instructor', 'Cultural sensitivity'],
+    pricePerHour: 67,
+    verified: true,
+    topRated: true,
+    bio: 'Culturally sensitive female instructor with outstanding student feedback.',
+    nextAvailableDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekday', 'weekend'],
+    availabilityTimes: ['AM', 'PM'],
+    gender: 'Female',
+    languages: ['English', 'Mandarin'],
+    testCentres: ['Sunnybank', 'Mt Gravatt', 'Capalaba']
+  },
+  {
+    id: 23,
+    name: 'Michael Tran',
+    avatar: 'M',
+    rating: 4.7,
+    reviewCount: 107,
+    experience: 6,
+    transmission: 'Manual',
+    location: 'Sunnybank, QLD 4109',
+    vehicle: '2022 Ford Focus',
+    specialties: ['Manual transmission', 'Test routes', 'Gear control'],
+    pricePerHour: 63,
+    verified: true,
+    topRated: false,
+    bio: 'Manual transmission expert with deep knowledge of local test routes.',
+    nextAvailableDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    availabilityDays: ['weekend'],
+    availabilityTimes: ['AM'],
+    gender: 'Male',
+    languages: ['English', 'Vietnamese'],
+    testCentres: ['Mt Gravatt', 'Sunnybank']
   }
 ];
 
@@ -251,7 +551,6 @@ export const filterInstructors = (filters) => {
       const instructorTransmission = instructor.transmission.toLowerCase();
       const searchTransmission = filters.transmission.toLowerCase();
 
-      // Normalize transmission types: "auto" matches "automatic", "manual" matches "manual"
       const normalizeTransmission = (type) => {
         if (type.includes('auto')) return 'auto';
         if (type.includes('manual')) return 'manual';
@@ -269,6 +568,46 @@ export const filterInstructors = (filters) => {
       if (!transmissionMatches) {
         return false;
       }
+    }
+
+    // Availability day filter
+    if (filters.availabilityDay && filters.availabilityDay.length > 0) {
+      const hasMatch = filters.availabilityDay.some(day =>
+        instructor.availabilityDays.includes(day)
+      );
+      if (!hasMatch) return false;
+    }
+
+    // Availability time filter
+    if (filters.availabilityTime && filters.availabilityTime.length > 0) {
+      const hasMatch = filters.availabilityTime.some(time =>
+        instructor.availabilityTimes.includes(time)
+      );
+      if (!hasMatch) return false;
+    }
+
+    // Gender filter
+    if (filters.gender && filters.gender.length > 0) {
+      if (!filters.gender.includes(instructor.gender)) return false;
+    }
+
+    // Language filter
+    if (filters.languages && filters.languages.length > 0) {
+      const hasMatch = filters.languages.some(lang =>
+        instructor.languages.includes(lang)
+      );
+      if (!hasMatch) return false;
+    }
+
+    // Test centre filter
+    if (filters.testCentre) {
+      if (!instructor.testCentres.includes(filters.testCentre)) return false;
+    }
+
+    // Next available date filters
+    if (filters.nextDays) {
+      const daysUntilAvailable = (instructor.nextAvailableDate - new Date()) / (1000 * 60 * 60 * 24);
+      if (daysUntilAvailable > filters.nextDays) return false;
     }
 
     return true;

@@ -5,7 +5,7 @@ import {
   FaUserFriends, FaSlidersH, FaSort, FaHome
 } from 'react-icons/fa';
 import InstructorCard from '../components/instructors/InstructorCard';
-import LocationAutocomplete from '../components/common/LocationAutocomplete';
+import FilterModal from '../components/instructors/FilterModal';
 import { instructors, filterInstructors } from '../data/instructors';
 import './Instructors.css';
 
@@ -14,42 +14,97 @@ const Instructors = () => {
   const [filters, setFilters] = useState({
     location: '',
     transmission: 'automatic',
-    testRequired: false
+    availabilityDay: [],
+    availabilityTime: [],
+    gender: [],
+    languages: [],
+    testCentre: '',
+    testDate: ''
   });
   const [filteredInstructors, setFilteredInstructors] = useState(instructors);
+  const [sortBy, setSortBy] = useState('');
+  const [quickFilter, setQuickFilter] = useState('');
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
 
   useEffect(() => {
     if (location.state) {
-      setFilters(location.state);
-      applyFilters(location.state);
+      const newFilters = {
+        ...filters,
+        location: location.state.location || '',
+        transmission: location.state.transmission || 'automatic'
+      };
+      setFilters(newFilters);
+      applyFilters(newFilters);
     }
   }, [location.state]);
 
-  const applyFilters = (filterData) => {
-    const filtered = filterInstructors(filterData);
+  const applyFilters = (filterData, sort = sortBy, quick = quickFilter) => {
+    let filtered = filterInstructors(filterData);
+
+    // Apply quick filters
+    if (quick === 'rating') {
+      filtered = filtered.filter(i => i.rating >= 4.8);
+    } else if (quick === 'available') {
+      filtered = filtered.sort((a, b) => a.nextAvailableDate - b.nextAvailableDate);
+    } else if (quick === 'price') {
+      filtered = filtered.sort((a, b) => a.pricePerHour - b.pricePerHour);
+    } else if (quick === 'soon') {
+      const fourDaysFromNow = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
+      filtered = filtered.filter(i => i.nextAvailableDate <= fourDaysFromNow);
+    } else if (quick === 'female') {
+      filtered = filtered.filter(i => i.gender === 'Female');
+    }
+
+    // Apply sorting
+    if (sort === 'rating') {
+      filtered = filtered.sort((a, b) => b.rating - a.rating);
+    } else if (sort === 'price-low') {
+      filtered = filtered.sort((a, b) => a.pricePerHour - b.pricePerHour);
+    } else if (sort === 'price-high') {
+      filtered = filtered.sort((a, b) => b.pricePerHour - a.pricePerHour);
+    } else if (sort === 'experience') {
+      filtered = filtered.sort((a, b) => b.experience - a.experience);
+    }
+
     setFilteredInstructors(filtered);
   };
 
-  const handleFilterChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const newFilters = {
-      ...filters,
-      [name]: type === 'checkbox' ? checked : value
-    };
+  const handleQuickFilterClick = (filterType) => {
+    const newQuickFilter = quickFilter === filterType ? '' : filterType;
+    setQuickFilter(newQuickFilter);
+    applyFilters(filters, sortBy, newQuickFilter);
+  };
+
+  const handleSortChange = (sortType) => {
+    setSortBy(sortType);
+    setIsSortMenuOpen(false);
+    applyFilters(filters, sortType, quickFilter);
+  };
+
+  const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
-    applyFilters(newFilters);
+    applyFilters(newFilters, sortBy, quickFilter);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    applyFilters(filters);
-  };
-
-  const [sortBy, setSortBy] = useState('rating');
-  const [quickFilter, setQuickFilter] = useState('');
   const minPrice = filteredInstructors.length > 0
     ? Math.min(...filteredInstructors.map(i => i.pricePerHour))
     : 0;
+
+  // Count instructors for quick filters
+  const getQuickFilterCount = (filterType) => {
+    let filtered = filterInstructors(filters);
+
+    if (filterType === 'rating') {
+      return filtered.filter(i => i.rating >= 4.8).length;
+    } else if (filterType === 'soon') {
+      const fourDaysFromNow = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
+      return filtered.filter(i => i.nextAvailableDate <= fourDaysFromNow).length;
+    } else if (filterType === 'female') {
+      return filtered.filter(i => i.gender === 'Female').length;
+    }
+    return filtered.length;
+  };
 
   return (
     <div className="instructors-page-ez">
@@ -71,49 +126,64 @@ const Instructors = () => {
         <div className="quick-filters">
           <button
             className={`filter-btn ${quickFilter === 'rating' ? 'active' : ''}`}
-            onClick={() => setQuickFilter('rating')}
+            onClick={() => handleQuickFilterClick('rating')}
           >
             <FaStar /> Highest Rated
           </button>
           <button
             className={`filter-btn ${quickFilter === 'available' ? 'active' : ''}`}
-            onClick={() => setQuickFilter('available')}
+            onClick={() => handleQuickFilterClick('available')}
           >
             <FaCalendar /> Next Available
           </button>
           <button
             className={`filter-btn ${quickFilter === 'price' ? 'active' : ''}`}
-            onClick={() => setQuickFilter('price')}
+            onClick={() => handleQuickFilterClick('price')}
           >
             <FaDollarSign /> Lowest Price
           </button>
           <button
             className={`filter-btn ${quickFilter === 'soon' ? 'active' : ''}`}
-            onClick={() => setQuickFilter('soon')}
+            onClick={() => handleQuickFilterClick('soon')}
           >
             <FaBolt /> Available Next 4 Days
           </button>
           <button
             className={`filter-btn ${quickFilter === 'female' ? 'active' : ''}`}
-            onClick={() => setQuickFilter('female')}
+            onClick={() => handleQuickFilterClick('female')}
           >
             <FaUserFriends /> Female Instructor
           </button>
 
           <div className="filters-right">
-            <button className="btn-filters">
+            <button className="btn-filters" onClick={() => setIsFilterModalOpen(true)}>
               <FaSlidersH /> Filters
             </button>
-            <button className="btn-sort">
-              <FaSort /> Sort
-            </button>
+            <div className="sort-dropdown">
+              <button className="btn-sort" onClick={() => setIsSortMenuOpen(!isSortMenuOpen)}>
+                <FaSort /> Sort
+              </button>
+              {isSortMenuOpen && (
+                <div className="sort-menu">
+                  <button onClick={() => handleSortChange('rating')}>Highest Rated</button>
+                  <button onClick={() => handleSortChange('price-low')}>Price: Low to High</button>
+                  <button onClick={() => handleSortChange('price-high')}>Price: High to Low</button>
+                  <button onClick={() => handleSortChange('experience')}>Most Experienced</button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Results Header */}
         <div className="results-heading">
-          <h1>{filteredInstructors.length} {filters.transmission === 'automatic' ? 'Auto' : filters.transmission === 'manual' ? 'Manual' : ''} Instructors Available</h1>
-          <p className="results-price">from ${minPrice.toFixed(2)}/hr</p>
+          <h1>
+            {filteredInstructors.length} {filters.transmission === 'automatic' ? 'Auto' : filters.transmission === 'manual' ? 'Manual' : ''} Instructors
+            {filters.location && ` in ${filters.location}`}
+          </h1>
+          {filteredInstructors.length > 0 && (
+            <p className="results-price">from ${minPrice.toFixed(2)}/hr</p>
+          )}
         </div>
 
         {/* Instructors Grid */}
@@ -130,6 +200,15 @@ const Instructors = () => {
           )}
         </div>
       </div>
+
+      {/* Filter Modal */}
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        filters={filters}
+        onApplyFilters={handleApplyFilters}
+        currentInstructors={filteredInstructors}
+      />
     </div>
   );
 };

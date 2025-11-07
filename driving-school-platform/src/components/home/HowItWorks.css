@@ -1,193 +1,234 @@
+/* Minimal How It Works section */
 .how-it-works {
-  background: linear-gradient(180deg, var(--white) 0%, var(--primary-50) 50%, var(--white) 100%);
+  background: #f5f5f7;
+  padding: 120px 0;
+}
+
+.how-it-works .container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 96px;
+}
+
+.section-title h2 {
+  font-size: 56px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+}
+
+.section-title p {
+  font-size: 21px;
+  color: #86868b;
+  font-weight: 400;
+  letter-spacing: -0.005em;
 }
 
 .steps-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-8);
-  margin-bottom: var(--space-16);
+  gap: 40px;
+  margin-bottom: 96px;
   position: relative;
 }
 
 .step-card {
-  background: var(--white);
-  padding: var(--space-8);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg);
-  border: 2px solid var(--primary-100);
-  transition: all var(--transition-slow);
+  background: #ffffff;
+  padding: 48px 40px;
+  border-radius: 20px;
   position: relative;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .step-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-400);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 .step-number {
-  position: absolute;
-  top: -20px;
-  right: var(--space-6);
-  font-size: var(--text-4xl);
-  font-weight: 800;
-  color: var(--accent-500);
-  opacity: 0.3;
-  font-family: var(--font-heading);
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(255, 193, 7, 0.15);
+  line-height: 1;
+  margin-bottom: -40px;
+  letter-spacing: -0.03em;
 }
 
 .step-icon {
-  font-size: var(--text-xl);
-  font-weight: 800;
-  letter-spacing: 1px;
-  margin-bottom: var(--space-4);
-  display: inline-block;
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--accent-600) 100%);
-  color: var(--white);
-  padding: var(--space-5) var(--space-6);
-  border-radius: var(--radius-xl);
-  text-transform: uppercase;
-  box-shadow: var(--shadow-md);
+  font-size: 17px;
+  font-weight: 600;
+  color: #ffc107;
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
 }
 
 .step-card h3 {
-  color: var(--primary-800);
-  font-size: var(--text-2xl);
-  margin-bottom: var(--space-4);
+  font-size: 28px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
 }
 
 .step-description {
-  color: var(--secondary-600);
-  line-height: 1.7;
-  margin-bottom: var(--space-5);
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6e6e73;
+  margin-bottom: 28px;
+  font-weight: 400;
 }
 
 .step-features {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .step-features li {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  color: var(--secondary-700);
-  font-size: var(--text-sm);
-  margin-bottom: var(--space-2);
+  gap: 10px;
+  font-size: 14px;
+  color: #1d1d1f;
+  font-weight: 400;
 }
 
 .check-icon {
-  color: var(--accent-600);
-  font-weight: 700;
-  font-size: var(--text-base);
-  background: var(--accent-100);
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-full);
-  flex-shrink: 0;
+  color: #ffc107;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .step-connector {
-  position: absolute;
-  top: 50%;
-  right: -2.5rem;
-  transform: translateY(-50%);
-  font-size: var(--text-4xl);
-  color: var(--primary-300);
-  font-weight: 700;
-  z-index: 1;
+  display: none; /* Remove connecting arrows for cleaner look */
 }
 
+/* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-  padding: var(--space-12);
-  border-radius: var(--radius-2xl);
   text-align: center;
-  color: var(--white);
-  box-shadow: var(--shadow-xl);
+  padding: 80px 48px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .cta-section h3 {
-  color: var(--white);
-  font-size: var(--text-3xl);
-  margin-bottom: var(--space-3);
+  font-size: 40px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
 }
 
 .cta-section p {
-  font-size: var(--text-lg);
-  margin-bottom: var(--space-8);
-  opacity: 0.95;
-  max-width: 700px;
+  font-size: 19px;
+  color: #6e6e73;
+  margin-bottom: 40px;
+  max-width: 640px;
   margin-left: auto;
   margin-right: auto;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 .btn-cta {
-  background: linear-gradient(135deg, var(--accent-600) 0%, var(--accent-500) 100%);
-  color: var(--primary-900);
-  padding: var(--space-5) var(--space-10);
-  font-size: var(--text-lg);
-  font-weight: 700;
-  border-radius: var(--radius-xl);
+  background: #ffc107;
+  color: #1d1d1f;
+  padding: 16px 32px;
+  font-size: 17px;
+  font-weight: 500;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 4px 20px rgba(243, 156, 18, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+  letter-spacing: -0.005em;
 }
 
 .btn-cta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(243, 156, 18, 0.5);
+  background: #ffb300;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.25);
+  transform: translateY(-2px);
 }
 
 .btn-cta:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 1024px) {
+  .how-it-works .container {
+    padding: 0 48px;
+  }
+
   .steps-container {
     grid-template-columns: 1fr;
-    gap: var(--space-6);
+    gap: 32px;
   }
 
-  .step-connector {
-    display: none;
+  .section-title h2 {
+    font-size: 48px;
   }
 
-  .step-card:hover {
-    transform: translateY(-4px);
+  .cta-section {
+    padding: 64px 40px;
+  }
+
+  .cta-section h3 {
+    font-size: 36px;
   }
 }
 
 @media (max-width: 768px) {
-  .step-card {
-    padding: var(--space-6);
+  .how-it-works {
+    padding: 80px 0;
   }
 
-  .step-icon {
-    font-size: var(--text-lg);
-    padding: var(--space-4) var(--space-5);
+  .how-it-works .container {
+    padding: 0 24px;
+  }
+
+  .section-title {
+    margin-bottom: 56px;
+  }
+
+  .section-title h2 {
+    font-size: 40px;
+  }
+
+  .section-title p {
+    font-size: 19px;
+  }
+
+  .step-card {
+    padding: 40px 32px;
   }
 
   .step-card h3 {
-    font-size: var(--text-xl);
+    font-size: 24px;
   }
 
   .cta-section {
-    padding: var(--space-8);
+    padding: 56px 32px;
   }
 
   .cta-section h3 {
-    font-size: var(--text-2xl);
+    font-size: 32px;
   }
 
   .cta-section p {
-    font-size: var(--text-base);
+    font-size: 17px;
   }
 }

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/server/node_modules
 /.pnp
 .pnp.js
 
@@ -23,3 +24,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .vercel
+
+# Documentation files (keep only essential ones)
+*.md
+!README.md
+
+# Old deployment configs
+DEPLOYMENT_SUCCESS.md
+PRODUCTION_URLS.md
+GOOGLE_MAPS_SETUP.md
+vercel.json

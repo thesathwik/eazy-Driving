@@ -24,9 +24,10 @@
     "eject": "react-scripts eject",
     "server": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
-    "install:all": "npm install && cd server && npm install",
-    "build:full": "npm run build && cd server && npm install --production",
-    "start:prod": "cd server && NODE_ENV=production npm start"
+    "install:server": "cd server && npm install",
+    "postinstall": "cd server && npm install",
+    "railway:build": "npm run build",
+    "railway:start": "cd server && NODE_ENV=production node src/server.js"
   },
   "eslintConfig": {
     "extends": [

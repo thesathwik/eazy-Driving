@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const connectDB = require('./config/database');
 
 // Initialize Express app
@@ -12,11 +13,17 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(helmet()); // Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable for React app to load properly
+})); // Security headers
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true
 }));
+
+// Stripe webhook endpoint needs raw body - must come before express.json()
+app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json()); // Body parser
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,6 +39,7 @@ app.use('/api/learners', require('./routes/learners'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/availability', require('./routes/availability'));
+app.use('/api/payment', require('./routes/payment'));
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -43,30 +51,42 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root route
-app.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Welcome to EAZYDRIVING API',
-    version: '1.0.0',
-    endpoints: {
-      health: '/health',
-      auth: '/api/auth',
-      instructors: '/api/instructors',
-      learners: '/api/learners',
-      bookings: '/api/bookings',
-      reviews: '/api/reviews'
-    }
-  });
-});
+// Serve static files from React build in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the React app
+  app.use(express.static(path.join(__dirname, '../../build')));
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
+  // Handle React routing, return all requests to React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../build', 'index.html'));
   });
-});
+} else {
+  // Root route for development
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      success: true,
+      message: 'Welcome to EAZYDRIVING API',
+      version: '1.0.0',
+      endpoints: {
+        health: '/health',
+        auth: '/api/auth',
+        instructors: '/api/instructors',
+        learners: '/api/learners',
+        bookings: '/api/bookings',
+        reviews: '/api/reviews',
+        payment: '/api/payment'
+      }
+    });
+  });
+
+  // 404 handler for development
+  app.use((req, res) => {
+    res.status(404).json({
+      success: false,
+      message: 'Route not found'
+    });
+  });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {

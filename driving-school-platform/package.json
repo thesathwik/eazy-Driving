@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@react-google-maps/api": "^2.20.7",
+    "@stripe/react-stripe-js": "^5.3.0",
+    "@stripe/stripe-js": "^8.3.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -19,7 +21,12 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "cd server && npm start",
+    "server:dev": "cd server && npm run dev",
+    "install:all": "npm install && cd server && npm install",
+    "build:full": "npm run build && cd server && npm install --production",
+    "start:prod": "cd server && NODE_ENV=production npm start"
   },
   "eslintConfig": {
     "extends": [

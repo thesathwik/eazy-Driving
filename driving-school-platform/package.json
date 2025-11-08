@@ -18,16 +18,13 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cd server && NODE_ENV=production node src/server.js",
+    "dev": "react-scripts start",
+    "build": "react-scripts build && cd server && npm install --production",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "cd server && npm start",
-    "server:dev": "cd server && npm run dev",
-    "install:server": "cd server && npm install",
-    "postinstall": "cd server && npm install",
-    "railway:build": "npm run build",
-    "railway:start": "cd server && NODE_ENV=production node src/server.js"
+    "server:dev": "cd server && npm run dev"
   },
   "eslintConfig": {
     "extends": [

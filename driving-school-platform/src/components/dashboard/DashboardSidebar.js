@@ -12,7 +12,7 @@ const DashboardSidebar = () => {
     <aside className="dashboard-sidebar">
       <div className="sidebar-logo">
         <Link to="/">
-          <h2>EAZYDRIVING</h2>
+          <h2>EEZYDRIVING</h2>
         </Link>
       </div>
 
@@ -60,14 +60,26 @@ const DashboardSidebar = () => {
           </button>
           {settingsOpen && (
             <div className="nav-submenu">
-              <Link to="/instructor/settings/profile" className="nav-subitem">
+              <Link to="/instructor/settings?tab=personal" className="nav-subitem">
+                Personal Details
+              </Link>
+              <Link to="/instructor/settings?tab=profile" className="nav-subitem">
                 Profile
               </Link>
-              <Link to="/instructor/settings/availability" className="nav-subitem">
-                Availability
+              <Link to="/instructor/settings?tab=vehicle" className="nav-subitem">
+                Vehicle
               </Link>
-              <Link to="/instructor/settings/notifications" className="nav-subitem">
-                Notifications
+              <Link to="/instructor/settings?tab=service-area" className="nav-subitem">
+                Service Area
+              </Link>
+              <Link to="/instructor/settings?tab=hours" className="nav-subitem">
+                Opening Hours
+              </Link>
+              <Link to="/instructor/settings?tab=pricing" className="nav-subitem">
+                Pricing
+              </Link>
+              <Link to="/instructor/settings?tab=banking" className="nav-subitem">
+                Banking
               </Link>
             </div>
           )}
@@ -93,10 +105,10 @@ const DashboardSidebar = () => {
 
       <div className="sidebar-rewards">
         <div className="rewards-card">
-          <div className="rewards-label">EazyRewards</div>
+          <div className="rewards-label">EezyRewards</div>
           <div className="rewards-amount">Earn $500</div>
           <Link to="/refer" className="rewards-link">
-            Refer instructors to EAZYDRIVING →
+            Refer instructors to EEZYDRIVING →
           </Link>
         </div>
       </div>

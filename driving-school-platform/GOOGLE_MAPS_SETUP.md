@@ -1,6 +1,6 @@
 # Google Maps API Setup Guide
 
-This guide will help you set up Google Maps API for the EAZYDRIVING platform.
+This guide will help you set up Google Maps API for the EEZYDRIVING platform.
 
 ## Step 1: Create a Google Cloud Project
 
@@ -8,7 +8,7 @@ This guide will help you set up Google Maps API for the EAZYDRIVING platform.
 2. Sign in with your Google account
 3. Click on the project dropdown at the top
 4. Click "New Project"
-5. Name your project (e.g., "EAZYDRIVING Platform")
+5. Name your project (e.g., "EEZYDRIVING Platform")
 6. Click "Create"
 
 ## Step 2: Enable Required APIs

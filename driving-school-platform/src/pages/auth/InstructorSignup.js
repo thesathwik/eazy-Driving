@@ -10,7 +10,6 @@ const InstructorSignup = () => {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
     password: '',
     confirmPassword: '',
     agreeTerms: false
@@ -46,12 +45,6 @@ const InstructorSignup = () => {
       newErrors.email = 'Email is invalid';
     }
 
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^[0-9]{10}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Phone number must be 10 digits';
-    }
-
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
@@ -85,15 +78,14 @@ const InstructorSignup = () => {
         password: formData.password,
         type: 'instructor',
         firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone
+        lastName: formData.lastName
       };
 
       const result = await signup(userData);
 
       if (result.success) {
-        // Redirect to profile completion page
-        navigate('/instructor/complete-profile');
+        // Redirect to verification sent page
+        navigate(`/auth/verification-sent?email=${encodeURIComponent(formData.email)}&role=instructor`);
       } else {
         if (result.field) {
           setErrors({ [result.field]: result.error });
@@ -114,7 +106,7 @@ const InstructorSignup = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h1>Join as an Instructor</h1>
-            <p>Grow your driving school business with EAZYDRIVING</p>
+            <p>Grow your driving school business with EEZYDRIVING</p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
@@ -166,20 +158,6 @@ const InstructorSignup = () => {
                 className={errors.email ? 'error' : ''}
               />
               {errors.email && <span className="error-message">{errors.email}</span>}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="0412 345 678"
-                value={formData.phone}
-                onChange={handleChange}
-                className={errors.phone ? 'error' : ''}
-              />
-              {errors.phone && <span className="error-message">{errors.phone}</span>}
             </div>
 
             <div className="form-group">
@@ -251,7 +229,7 @@ const InstructorSignup = () => {
         </div>
 
         <div className="auth-info auth-info-instructor">
-          <h2>Join EAZYDRIVING Today</h2>
+          <h2>Join EEZYDRIVING Today</h2>
           <ul className="info-list">
             <li>
               <div className="info-icon">✓</div>

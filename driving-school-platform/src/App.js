@@ -13,7 +13,13 @@ import InstructorLogin from './pages/auth/InstructorLogin';
 import LearnerSignup from './pages/auth/LearnerSignup';
 import InstructorSignup from './pages/auth/InstructorSignup';
 import CompleteInstructorProfile from './pages/auth/CompleteInstructorProfile';
+import VerifyEmail from './pages/auth/VerifyEmail';
+import VerificationSent from './pages/auth/VerificationSent';
 import InstructorDashboard from './pages/instructor/InstructorDashboard';
+import InstructorCalendar from './pages/instructor/InstructorCalendar';
+import InstructorLearners from './pages/instructor/InstructorLearners';
+import InstructorReports from './pages/instructor/InstructorReports';
+import InstructorSettings from './pages/instructor/InstructorSettings';
 import './styles/global.css';
 
 function AppContent() {
@@ -21,6 +27,10 @@ function AppContent() {
 
   // Hide Navigation and Footer for dashboard pages
   const isDashboard = location.pathname.startsWith('/instructor/dashboard') ||
+                      location.pathname.startsWith('/instructor/calendar') ||
+                      location.pathname.startsWith('/instructor/learners') ||
+                      location.pathname.startsWith('/instructor/reports') ||
+                      location.pathname.startsWith('/instructor/settings') ||
                       location.pathname.startsWith('/learner/dashboard');
 
   return (
@@ -37,8 +47,14 @@ function AppContent() {
           <Route path="/login/instructor" element={<InstructorLogin />} />
           <Route path="/signup/learner" element={<LearnerSignup />} />
           <Route path="/signup/instructor" element={<InstructorSignup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/auth/verification-sent" element={<VerificationSent />} />
           <Route path="/instructor/complete-profile" element={<CompleteInstructorProfile />} />
           <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+          <Route path="/instructor/calendar" element={<InstructorCalendar />} />
+          <Route path="/instructor/learners" element={<InstructorLearners />} />
+          <Route path="/instructor/reports" element={<InstructorReports />} />
+          <Route path="/instructor/settings" element={<InstructorSettings />} />
           <Route path="/signup" element={<LearnerSignup />} />
           {/* Additional routes can be added here */}
         </Routes>

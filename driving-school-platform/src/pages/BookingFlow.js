@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { FaCheck, FaInfoCircle, FaChevronDown, FaChevronUp, FaStar, FaCheckCircle, FaClock, FaArrowLeft, FaEnvelope, FaLock, FaCreditCard } from 'react-icons/fa';
+import { FaCheck, FaInfoCircle, FaChevronDown, FaChevronUp, FaStar, FaCheckCircle, FaClock, FaArrowLeft, FaEnvelope, FaLock, FaCreditCard, FaSpinner } from 'react-icons/fa';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { LoadScript } from '@react-google-maps/api';
 import StripePaymentForm from '../components/payment/StripePaymentForm';
-import { getInstructorById } from '../data/instructors';
+import LocationAutocomplete from '../components/LocationAutocomplete';
+import { getHeaders } from '../config/api';
+import { getCurrentUser, resendVerificationEmail } from '../utils/authService';
 import './BookingFlow.css';
 
 // Initialize Stripe
@@ -14,7 +17,10 @@ const BookingFlowContent = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const instructor = getInstructorById(id);
+
+  const [instructor, setInstructor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [availabilityData, setAvailabilityData] = useState([]);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPackage, setSelectedPackage] = useState('10hours');
@@ -22,13 +28,22 @@ const BookingFlowContent = () => {
   const [customHours, setCustomHours] = useState(10);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
 
+  // Email verification state
+  const [waitingForVerification, setWaitingForVerification] = useState(false);
+  const [isUserVerified, setIsUserVerified] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [resendSuccess, setResendSuccess] = useState(false);
+  const [resendError, setResendError] = useState('');
+  const verificationCheckInterval = useRef(null);
+
   // Step 3: Book your lessons state
   const [bookings, setBookings] = useState([{
     id: 1,
     bookingType: '1hour',
     selectedDate: '',
     selectedTime: '',
-    pickupLocation: ''
+    pickupSuburb: '',
+    pickupAddress: ''
   }]);
 
   // Step 4: Learner Registration state
@@ -65,6 +80,88 @@ const BookingFlowContent = () => {
     cvc: ''
   });
 
+  // Fetch instructor data
+  useEffect(() => {
+    const fetchInstructor = async () => {
+      try {
+        setLoading(true);
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+        const response = await fetch(`${API_URL}/instructors/${id}`, {
+          headers: getHeaders(false)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Transform API data to match component expectations
+          const transformedInstructor = {
+            ...data.data,
+            id: data.data._id,
+            name: `${data.data.user?.firstName} ${data.data.user?.lastName}`.trim(),
+            pricePerHour: data.data.pricing?.marketplaceLessonRate || 80,
+            rating: data.data.stats?.averageRating || 0,
+            reviewCount: data.data.stats?.totalReviews || 0,
+            location: data.data.serviceArea?.suburbs?.[0] || 'Unknown',
+            transmission: data.data.vehicle?.transmission || 'Auto',
+            vehicle: `${data.data.vehicle?.year || ''} ${data.data.vehicle?.make || ''} ${data.data.vehicle?.model || ''}`.trim() || 'Vehicle',
+            experience: data.data.profileInfo?.yearsExperience || 0,
+            avatar: `${data.data.user?.firstName?.[0] || ''}${data.data.user?.lastName?.[0] || ''}`.toUpperCase() || 'IN'
+          };
+          setInstructor(transformedInstructor);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching instructor:', err);
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchInstructor();
+    }
+  }, [id]);
+
+  // Fetch availability data
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      if (!instructor) return;
+
+      try {
+        const today = new Date();
+        const endDate = new Date(today);
+        endDate.setDate(today.getDate() + 60); // Fetch 60 days of availability
+
+        const startDateStr = today.toISOString().split('T')[0];
+        const endDateStr = endDate.toISOString().split('T')[0];
+
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+        const response = await fetch(
+          `${API_URL}/availability/instructor/${instructor.id}?startDate=${startDateStr}&endDate=${endDateStr}`
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Availability data for booking:', data);
+          setAvailabilityData(data.data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching availability for booking:', err);
+      }
+    };
+
+    fetchAvailability();
+  }, [instructor]);
+
+  // Cleanup verification interval on unmount
+  useEffect(() => {
+    return () => {
+      if (verificationCheckInterval.current) {
+        clearInterval(verificationCheckInterval.current);
+      }
+    };
+  }, []);
+
   const steps = [
     { number: 1, label: 'Instructor' },
     { number: 2, label: 'Amount' },
@@ -72,6 +169,68 @@ const BookingFlowContent = () => {
     { number: 4, label: 'Learner Registration' },
     { number: 5, label: 'Payment' }
   ];
+
+  // Function to check user verification status
+  const checkVerificationStatus = async () => {
+    try {
+      const response = await getCurrentUser();
+      if (response.success && response.data) {
+        const user = response.data;
+        if (user.isEmailVerified) {
+          setIsUserVerified(true);
+          setWaitingForVerification(false);
+          // Clear the polling interval
+          if (verificationCheckInterval.current) {
+            clearInterval(verificationCheckInterval.current);
+            verificationCheckInterval.current = null;
+          }
+          // Show success message and proceed to payment
+          setTimeout(() => {
+            setCurrentStep(5);
+          }, 1500);
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking verification status:', error);
+      return false;
+    }
+  };
+
+  // Function to start polling for verification status
+  const startVerificationPolling = () => {
+    // Clear any existing interval
+    if (verificationCheckInterval.current) {
+      clearInterval(verificationCheckInterval.current);
+    }
+
+    // Check immediately
+    checkVerificationStatus();
+
+    // Then check every 5 seconds
+    verificationCheckInterval.current = setInterval(() => {
+      checkVerificationStatus();
+    }, 5000);
+  };
+
+  // Function to handle resend verification email
+  const handleResendVerification = async () => {
+    setResendSuccess(false);
+    setResendError('');
+
+    try {
+      const result = await resendVerificationEmail(verificationEmail);
+      if (result.success) {
+        setResendSuccess(true);
+        setTimeout(() => setResendSuccess(false), 5000);
+      } else {
+        setResendError(result.message || 'Failed to resend verification email');
+      }
+    } catch (error) {
+      setResendError(error.message || 'Failed to resend verification email');
+    }
+  };
 
   // Pricing calculations
   const hourlyRate = instructor?.pricePerHour || 80;
@@ -131,7 +290,25 @@ const BookingFlowContent = () => {
 
       case 3:
         // Step 3: Book lessons - optional step (can skip)
-        // No required validation as users can book from dashboard later
+        // But if user has entered booking details, validate they're complete
+        const filledBookings = bookings.filter(b =>
+          b.selectedDate || b.selectedTime || b.pickupSuburb || b.pickupAddress
+        );
+
+        filledBookings.forEach((booking, index) => {
+          if (!booking.selectedDate) {
+            errors[`booking${booking.id}_date`] = `Booking ${index + 1}: Please select a date`;
+          }
+          if (!booking.selectedTime) {
+            errors[`booking${booking.id}_time`] = `Booking ${index + 1}: Please select a time`;
+          }
+          if (!booking.pickupSuburb) {
+            errors[`booking${booking.id}_suburb`] = `Booking ${index + 1}: Please select a suburb`;
+          }
+          if (!booking.pickupAddress?.trim()) {
+            errors[`booking${booking.id}_address`] = `Booking ${index + 1}: Please enter a street address`;
+          }
+        });
         break;
 
       case 4:
@@ -199,7 +376,7 @@ const BookingFlowContent = () => {
     return errors;
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     // Validate current step
     const errors = validateStep(currentStep);
 
@@ -208,6 +385,163 @@ const BookingFlowContent = () => {
       // Scroll to top to show errors
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
+    }
+
+    // Auto-populate learner pickup details from first booking when moving to step 4
+    if (currentStep === 3 && bookings.length > 0) {
+      const firstBooking = bookings[0];
+
+      console.log('First booking data:', firstBooking);
+
+      // Only populate if learner details are empty and booking has pickup info
+      if (!learnerDetails.pickupAddress && firstBooking.pickupAddress) {
+        // Parse the full address to extract components
+        // Format: "2 Fairfield Square, Morwell VIC, Australia"
+        const fullAddress = firstBooking.pickupAddress;
+
+        // Extract suburb and state from the address
+        let extractedSuburb = firstBooking.pickupSuburb || '';
+        let extractedState = 'VIC'; // Default to VIC
+
+        console.log('Full address:', fullAddress);
+        console.log('pickupSuburb from booking:', firstBooking.pickupSuburb);
+
+        // Try to parse state from address (e.g., "VIC", "NSW", "QLD")
+        const stateMatch = fullAddress.match(/\b(VIC|NSW|QLD|SA|WA|TAS|NT|ACT)\b/i);
+        if (stateMatch) {
+          extractedState = stateMatch[1].toUpperCase();
+        }
+
+        // If suburb wasn't selected from dropdown, try to extract from address
+        if (!extractedSuburb) {
+          // Split by comma and get the second part (suburb + state)
+          const parts = fullAddress.split(',').map(p => p.trim());
+          console.log('Address parts:', parts);
+          if (parts.length >= 2) {
+            // Second part is usually "Suburb STATE"
+            const suburbStatePart = parts[1];
+            // Remove state abbreviation to get suburb
+            extractedSuburb = suburbStatePart.replace(/\b(VIC|NSW|QLD|SA|WA|TAS|NT|ACT)\b/i, '').trim();
+          }
+        }
+
+        console.log('Extracted suburb:', extractedSuburb);
+        console.log('Extracted state:', extractedState);
+
+        setLearnerDetails(prev => ({
+          ...prev,
+          pickupAddress: fullAddress,
+          suburb: extractedSuburb,
+          state: extractedState
+        }));
+      }
+    }
+
+    // Handle learner registration step - check for email verification
+    if (currentStep === 4 && !showLogin) {
+      // This is a registration, we need to register the user and check verification
+      try {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+        const registerResponse = await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: learnerDetails.firstName,
+            lastName: learnerDetails.lastName,
+            email: learnerDetails.email,
+            password: learnerDetails.password,
+            phone: learnerDetails.phone,
+            role: 'learner'
+          })
+        });
+
+        const registerData = await registerResponse.json();
+
+        if (!registerResponse.ok) {
+          setValidationErrors({ registration: registerData.message || 'Failed to create account' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+
+        // Check if user needs email verification
+        if (registerData.data && registerData.data.isEmailVerified === false) {
+          // User needs to verify email
+          setVerificationEmail(learnerDetails.email);
+          setWaitingForVerification(true);
+          setIsUserVerified(false);
+
+          // Store the token for later use
+          if (registerData.data.token) {
+            localStorage.setItem('authToken', registerData.data.token);
+            localStorage.setItem('userRole', 'learner');
+          }
+
+          // Start polling for verification
+          startVerificationPolling();
+
+          // Clear errors
+          setValidationErrors({});
+          return; // Don't proceed to next step yet
+        } else if (registerData.data && registerData.data.isEmailVerified === true) {
+          // User is already verified, proceed to payment
+          if (registerData.data.token) {
+            localStorage.setItem('authToken', registerData.data.token);
+            localStorage.setItem('userRole', 'learner');
+          }
+          setValidationErrors({});
+          setCurrentStep(5);
+          return;
+        }
+      } catch (error) {
+        console.error('Error during registration:', error);
+        setValidationErrors({ registration: 'An error occurred during registration. Please try again.' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
+    // Handle login step - check if user is verified
+    if (currentStep === 4 && showLogin) {
+      try {
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+        const loginResponse = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: loginCredentials.email,
+            password: loginCredentials.password,
+            role: 'learner'
+          })
+        });
+
+        const loginData = await loginResponse.json();
+
+        if (!loginResponse.ok) {
+          setValidationErrors({ login: loginData.message || 'Login failed' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+
+        // Store token
+        if (loginData.data && loginData.data.token) {
+          localStorage.setItem('authToken', loginData.data.token);
+          localStorage.setItem('userRole', 'learner');
+        }
+
+        // Proceed to payment
+        setValidationErrors({});
+        setCurrentStep(5);
+        return;
+      } catch (error) {
+        console.error('Error during login:', error);
+        setValidationErrors({ login: 'An error occurred during login. Please try again.' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
     }
 
     // Clear errors and proceed
@@ -237,7 +571,8 @@ const BookingFlowContent = () => {
       bookingType: '1hour',
       selectedDate: '',
       selectedTime: '',
-      pickupLocation: ''
+      pickupSuburb: '',
+      pickupAddress: ''
     };
     setBookings([...bookings, newBooking]);
   };
@@ -271,17 +606,30 @@ const BookingFlowContent = () => {
     setPaymentProcessing(true);
 
     try {
-      // Save booking to database
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+
+      // Get auth token from localStorage (user should be already registered/logged in at this point)
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        throw new Error('Authentication required. Please log in again.');
+      }
+
+      // Create booking with auth token
+      console.log('Creating booking...');
       const bookingData = {
         instructorId: id,
-        learnerId: learnerDetails.email, // Will be replaced with actual learner ID after auth
         packageDetails: {
           hours: packageDetails.hours,
           totalAmount: totalDue,
           discount: discount,
           processingFee: processingFee
         },
-        bookings: bookings.filter(b => b.selectedDate && b.selectedTime),
+        bookings: bookings
+          .filter(b => b.selectedDate && b.selectedTime)
+          .map(b => ({
+            ...b,
+            pickupLocation: b.pickupAddress // Full address from Google Places
+          })),
         paymentIntent: {
           id: paymentIntent.id,
           status: paymentIntent.status,
@@ -300,10 +648,11 @@ const BookingFlowContent = () => {
         }
       };
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/bookings`, {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
         },
         body: JSON.stringify(bookingData)
       });
@@ -346,65 +695,108 @@ const BookingFlowContent = () => {
     return availDate.toLocaleDateString('en-AU', { month: 'short', day: 'numeric' });
   };
 
-  // Generate available dates based on instructor availability
+  // Generate available dates based on instructor availability from API
   const getAvailableDates = () => {
-    if (!instructor) return [];
+    if (!availabilityData || availabilityData.length === 0) return [];
 
-    const dates = [];
-    const today = new Date();
-    const startDate = instructor.nextAvailableDate || today;
-
-    // Generate next 30 days of availability
-    for (let i = 0; i < 30; i++) {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-
-      const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const isWeekday = !isWeekend;
-
-      // Check if instructor is available on this day
-      const hasWeekdayAvailability = instructor.availabilityDays?.includes('weekday') && isWeekday;
-      const hasWeekendAvailability = instructor.availabilityDays?.includes('weekend') && isWeekend;
-
-      if (hasWeekdayAvailability || hasWeekendAvailability) {
-        dates.push(date.toISOString().split('T')[0]);
-      }
-    }
+    // Extract dates from availability data that have at least one available slot
+    const dates = availabilityData
+      .filter(avail => {
+        // Check if there's at least one available time slot
+        return avail.timeSlots && avail.timeSlots.some(slot => slot.available === true);
+      })
+      .map(avail => {
+        // Convert date to YYYY-MM-DD format
+        const date = new Date(avail.date);
+        return date.toISOString().split('T')[0];
+      })
+      .sort(); // Sort dates chronologically
 
     return dates;
   };
 
-  // Generate available time slots based on instructor availability
-  const getAvailableTimeSlots = () => {
-    if (!instructor) return [];
+  // Helper function to parse time string to minutes since midnight
+  const parseTimeToMinutes = (timeStr) => {
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!match) return 0;
 
-    const amSlots = [
-      '5:00 AM', '6:00 AM', '7:00 AM', '8:00 AM',
-      '9:00 AM', '10:00 AM', '11:00 AM'
-    ];
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const period = match[3].toUpperCase();
 
-    const pmSlots = [
-      '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM',
-      '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM',
-      '8:00 PM', '9:00 PM'
-    ];
+    if (period === 'PM' && hours !== 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
 
-    let availableSlots = [];
-
-    if (instructor.availabilityTimes?.includes('AM')) {
-      availableSlots = [...availableSlots, ...amSlots];
-    }
-
-    if (instructor.availabilityTimes?.includes('PM')) {
-      availableSlots = [...availableSlots, ...pmSlots];
-    }
-
-    return availableSlots;
+    return hours * 60 + minutes;
   };
 
-  const availableDates = getAvailableDates();
-  const availableTimeSlots = getAvailableTimeSlots();
+  // Generate available time slots for a specific date based on instructor availability and booking duration
+  const getAvailableTimeSlotsForDate = (dateString, bookingType) => {
+    if (!availabilityData || availabilityData.length === 0 || !dateString) return [];
+
+    // Determine lesson duration based on booking type
+    let durationHours = 1;
+    if (bookingType === '2hour') durationHours = 2;
+    if (bookingType === 'test') durationHours = 2.5;
+
+    // Find the availability record for the selected date
+    const dateAvailability = availabilityData.find(avail => {
+      const availDate = new Date(avail.date).toISOString().split('T')[0];
+      return availDate === dateString;
+    });
+
+    if (!dateAvailability) return [];
+
+    // Get all available slots
+    const allSlots = dateAvailability.timeSlots
+      .filter(slot => slot.available === true)
+      .map(slot => ({ time: slot.time, minutes: parseTimeToMinutes(slot.time) }))
+      .sort((a, b) => a.minutes - b.minutes);
+
+    // Filter slots that have enough consecutive availability
+    const validSlots = [];
+    const durationMinutes = durationHours * 60;
+
+    for (let i = 0; i < allSlots.length; i++) {
+      const startSlot = allSlots[i];
+      const endTimeNeeded = startSlot.minutes + durationMinutes;
+
+      // Check if we have consecutive available slots to cover the duration
+      let hasEnoughTime = true;
+      let currentTime = startSlot.minutes;
+
+      while (currentTime < endTimeNeeded) {
+        const nextHour = currentTime + 60;
+        const hasSlot = allSlots.some(s => s.minutes === currentTime);
+
+        if (!hasSlot) {
+          hasEnoughTime = false;
+          break;
+        }
+
+        currentTime = nextHour;
+      }
+
+      if (hasEnoughTime) {
+        validSlots.push(startSlot.time);
+      }
+    }
+
+    return validSlots;
+  };
+
+  if (loading) {
+    return (
+      <div className="booking-flow">
+        <div className="container">
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading instructor details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!instructor) {
     return (
@@ -415,6 +807,8 @@ const BookingFlowContent = () => {
       </div>
     );
   }
+
+  const availableDates = getAvailableDates();
 
   return (
     <div className="booking-flow">
@@ -763,9 +1157,10 @@ const BookingFlowContent = () => {
                             value={booking.selectedTime}
                             onChange={(e) => handleBookingChange(booking.id, 'selectedTime', e.target.value)}
                             className="time-select"
+                            disabled={!booking.selectedDate}
                           >
                             <option value="">Select a time</option>
-                            {availableTimeSlots.map((time) => (
+                            {getAvailableTimeSlotsForDate(booking.selectedDate, booking.bookingType).map((time) => (
                               <option key={time} value={time}>
                                 {time}
                               </option>
@@ -777,17 +1172,39 @@ const BookingFlowContent = () => {
 
                     {/* Pickup Location */}
                     <div className="form-group">
-                      <label>Lesson Pick Up Location</label>
-                      <div className="location-input-group">
-                        <input
-                          type="text"
-                          value={booking.pickupLocation}
-                          onChange={(e) => handleBookingChange(booking.id, 'pickupLocation', e.target.value)}
-                          className="location-input"
-                          placeholder="123 Placeholder Street, Sydney NSW 2000"
-                        />
-                        <button className="btn-edit-location">Edit</button>
-                      </div>
+                      <label>Pick Up Suburb</label>
+                      <select
+                        value={booking.pickupSuburb}
+                        onChange={(e) => handleBookingChange(booking.id, 'pickupSuburb', e.target.value)}
+                        className="form-select"
+                      >
+                        <option value="">Select a suburb</option>
+                        {instructor.serviceArea?.suburbs?.map((suburb) => (
+                          <option key={suburb} value={suburb}>
+                            {suburb}
+                          </option>
+                        ))}
+                      </select>
+                      <p className="field-hint">
+                        {instructor.name} services the suburbs listed above.
+                      </p>
+                    </div>
+
+                    {/* Street Address with Autocomplete */}
+                    <div className="form-group">
+                      <label>Street Address</label>
+                      <LocationAutocomplete
+                        suburb={booking.pickupSuburb}
+                        value={booking.pickupAddress}
+                        onChange={(address) => handleBookingChange(booking.id, 'pickupAddress', address)}
+                        placeholder={booking.pickupSuburb ? `Start typing address in ${booking.pickupSuburb}...` : "Select a suburb first"}
+                        className="form-input"
+                      />
+                      <p className="field-hint">
+                        {booking.pickupSuburb
+                          ? `Start typing your address and select from suggestions in ${booking.pickupSuburb}.`
+                          : 'Please select a suburb first to enable address autocomplete.'}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -1236,7 +1653,75 @@ const BookingFlowContent = () => {
             </div>
           )}
 
-          {currentStep === 5 && (
+          {/* Email Verification Screen */}
+          {waitingForVerification && currentStep === 4 && (
+            <div className="booking-step-simple">
+              <div className="verification-container">
+                <div className="verification-card">
+                  {/* Email icon */}
+                  <div className="verification-icon">
+                    <FaEnvelope />
+                  </div>
+
+                  {/* Title */}
+                  <h1 className="verification-title">
+                    {isUserVerified ? 'Email Verified!' : 'Verify Your Email to Continue'}
+                  </h1>
+
+                  {/* Message */}
+                  {!isUserVerified ? (
+                    <>
+                      <p className="verification-message">
+                        We've sent a verification link to <strong>{verificationEmail}</strong>
+                      </p>
+                      <p className="verification-sub-message">
+                        Please check your email and click the verification link to continue with your booking
+                      </p>
+
+                      {/* Checking status indicator */}
+                      <div className="verification-status">
+                        <FaSpinner className="verification-spinner" />
+                        <span>Checking verification status...</span>
+                      </div>
+
+                      {/* Resend section */}
+                      <div className="verification-resend">
+                        <p>Didn't receive the email?</p>
+                        <button
+                          className="btn-resend-verification"
+                          onClick={handleResendVerification}
+                          disabled={resendSuccess}
+                        >
+                          {resendSuccess ? 'Email Sent!' : 'Resend'}
+                        </button>
+                      </div>
+
+                      {/* Success/Error messages */}
+                      {resendSuccess && (
+                        <div className="verification-alert success">
+                          Verification email resent successfully!
+                        </div>
+                      )}
+                      {resendError && (
+                        <div className="verification-alert error">
+                          {resendError}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="verification-success">
+                        <FaCheckCircle className="verification-success-icon" />
+                        <p>Email verified! Proceeding to payment...</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === 5 && !waitingForVerification && (
             <div className="booking-step booking-main-content">
               <div>
                 {/* Back Button at Top */}
@@ -1463,9 +1948,14 @@ const BookingFlowContent = () => {
 // Wrap with Stripe Elements provider
 const BookingFlow = () => {
   return (
-    <Elements stripe={stripePromise}>
-      <BookingFlowContent />
-    </Elements>
+    <LoadScript
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+      libraries={['places']}
+    >
+      <Elements stripe={stripePromise}>
+        <BookingFlowContent />
+      </Elements>
+    </LoadScript>
   );
 };
 

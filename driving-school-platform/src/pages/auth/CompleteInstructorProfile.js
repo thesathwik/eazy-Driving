@@ -89,13 +89,12 @@ const CompleteInstructorProfile = () => {
   // Pre-fill data from user signup
   useEffect(() => {
     if (user) {
-      console.log('User data from context:', user);
       setFormData(prev => ({
         ...prev,
-        firstName: user.firstName || user.name?.split(' ')[0] || '',
-        lastName: user.lastName || user.name?.split(' ')[1] || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         email: user.email || '',
-        phone: user.phone || user.phoneNumber || ''
+        phone: user.phone || ''
       }));
     }
   }, [user]);
@@ -384,7 +383,7 @@ const CompleteInstructorProfile = () => {
 
     // Validate marketplace lesson rate
     if (!formData.pricing.marketplaceLessonRate || parseFloat(formData.pricing.marketplaceLessonRate) <= 0) {
-      newErrors.marketplaceLessonRate = 'EAZYDRIVING lesson rate is required and must be greater than 0';
+      newErrors.marketplaceLessonRate = 'EEZYDRIVING lesson rate is required and must be greater than 0';
     }
 
     // Validate private lesson rate
@@ -394,7 +393,7 @@ const CompleteInstructorProfile = () => {
 
     // Validate marketplace test package rate
     if (!formData.pricing.marketplaceTestPackageRate || parseFloat(formData.pricing.marketplaceTestPackageRate) <= 0) {
-      newErrors.marketplaceTestPackageRate = 'EAZYDRIVING test package rate is required and must be greater than 0';
+      newErrors.marketplaceTestPackageRate = 'EEZYDRIVING test package rate is required and must be greater than 0';
     }
 
     // Validate private test package rate
@@ -506,12 +505,87 @@ const CompleteInstructorProfile = () => {
 
     setIsLoading(true);
     try {
-      // TODO: Implement API call to save instructor profile
-      console.log('Profile data:', formData);
-      // For now, just navigate to dashboard
-      navigate('/');
+      // Prepare profile data - transform flat form data to nested structure
+      const profileData = {
+        preferredFirstName: formData.preferredFirstName,
+        gender: formData.gender,
+        postcode: formData.postcode,
+        bio: formData.bio,
+        languages: formData.languages,
+        memberOfAssociation: formData.memberOfAssociation === 'yes',
+        instructingSince: {
+          month: formData.startMonth,
+          year: parseInt(formData.startYear)
+        },
+        services: formData.services,
+        notifications: {
+          email: formData.emailNotifications,
+          sms: formData.smsNotifications
+        },
+        marketplaceVisible: formData.marketplaceVisible,
+        vehicle: {
+          transmissionOffered: formData.transmissionOffered,
+          transmission: formData.vehicleTransmission,
+          registration: formData.vehicleRegistration,
+          make: formData.vehicleMake,
+          model: formData.vehicleModel,
+          year: parseInt(formData.vehicleYear),
+          ancapRating: formData.ancapRating,
+          hasDualControls: formData.hasDualControls === 'yes'
+        },
+        serviceArea: {
+          suburbs: formData.serviceSuburbs,
+          testLocations: formData.testLocations
+        },
+        openingHours: formData.openingHours,
+        pricing: {
+          marketplaceLessonRate: parseFloat(formData.pricing.marketplaceLessonRate),
+          privateLessonRate: parseFloat(formData.pricing.privateLessonRate),
+          marketplaceTestPackageRate: parseFloat(formData.pricing.marketplaceTestPackageRate),
+          privateTestPackageRate: parseFloat(formData.pricing.privateTestPackageRate)
+        },
+        banking: {
+          businessName: formData.banking.businessName,
+          abn: formData.banking.abn,
+          billingAddress: {
+            street: formData.banking.billingAddress,
+            suburb: formData.banking.suburb,
+            postcode: formData.banking.postcode,
+            state: formData.banking.state
+          },
+          registeredForGST: formData.banking.registeredForGST === 'yes',
+          payoutFrequency: formData.banking.payoutFrequency,
+          bankAccount: {
+            accountName: formData.banking.accountName,
+            bsb: formData.banking.bsb,
+            accountNumber: formData.banking.accountNumber
+          }
+        }
+      };
+
+      // Get auth token
+      const token = localStorage.getItem('eazydriving_session');
+      const session = token ? JSON.parse(token) : null;
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5001/api'}/instructors/profile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.token}`
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        navigate('/instructor/dashboard');
+      } else {
+        setErrors({ general: data.message || 'Failed to save profile' });
+      }
     } catch (error) {
-      setErrors({ general: error.message });
+      console.error('Profile save error:', error);
+      setErrors({ general: 'An error occurred while saving your profile' });
     } finally {
       setIsLoading(false);
     }
@@ -743,12 +817,12 @@ const CompleteInstructorProfile = () => {
 
       <div className="pricing-info-banner">
         <div className="learner-type">
-          <strong>EAZYDRIVING Learners:</strong>
-          <p>from EAZYDRIVING marketplace.</p>
+          <strong>EEZYDRIVING Learners:</strong>
+          <p>from EEZYDRIVING marketplace.</p>
         </div>
         <div className="learner-type">
           <strong>Private Learners:</strong>
-          <p>invited to EAZYDRIVING by you.</p>
+          <p>invited to EEZYDRIVING by you.</p>
         </div>
       </div>
 
@@ -759,7 +833,7 @@ const CompleteInstructorProfile = () => {
 
           <div className="pricing-row">
             <div className="pricing-label">
-              <span className="pricing-type">EAZYDRIVING Learners</span>
+              <span className="pricing-type">EEZYDRIVING Learners</span>
             </div>
             <div className="pricing-input-group">
               <span className="pricing-currency">$</span>
@@ -801,7 +875,7 @@ const CompleteInstructorProfile = () => {
 
           <div className="pricing-row">
             <div className="pricing-label">
-              <span className="pricing-type">EAZYDRIVING Learners</span>
+              <span className="pricing-type">EEZYDRIVING Learners</span>
             </div>
             <div className="pricing-input-group">
               <span className="pricing-currency">$</span>
@@ -1535,10 +1609,10 @@ const CompleteInstructorProfile = () => {
       </div>
 
       <div className="form-section">
-        <h3 className="section-heading">EAZYDRIVING Marketplace</h3>
+        <h3 className="section-heading">EEZYDRIVING Marketplace</h3>
         <div className="marketplace-toggle">
           <div className="toggle-info">
-            <p>Your profile is discoverable by Learners on EAZYDRIVING marketplace search results.</p>
+            <p>Your profile is discoverable by Learners on EEZYDRIVING marketplace search results.</p>
           </div>
           <label className="toggle-switch">
             <input

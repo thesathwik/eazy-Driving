@@ -1,4 +1,4 @@
-# Deploy EAZYDRIVING Backend to Production
+# Deploy EEZYDRIVING Backend to Production
 
 This guide will help you deploy the backend to **Railway** with **MongoDB Atlas** database.
 

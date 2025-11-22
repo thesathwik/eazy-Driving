@@ -40,12 +40,13 @@ app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/availability', require('./routes/availability'));
 app.use('/api/payment', require('./routes/payment'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 // Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'EAZYDRIVING API is running',
+    message: 'EEZYDRIVING API is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV
   });
@@ -65,7 +66,7 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/', (req, res) => {
     res.status(200).json({
       success: true,
-      message: 'Welcome to EAZYDRIVING API',
+      message: 'Welcome to EEZYDRIVING API',
       version: '1.0.0',
       endpoints: {
         health: '/health',
@@ -109,7 +110,7 @@ const server = app.listen(PORT, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════╗');
   console.log('║                                              ║');
-  console.log('║      🚗 EAZYDRIVING API SERVER  🚗          ║');
+  console.log('║      🚗 EEZYDRIVING API SERVER  🚗          ║');
   console.log('║                                              ║');
   console.log('╚══════════════════════════════════════════════╝');
   console.log('');

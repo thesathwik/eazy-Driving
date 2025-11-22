@@ -10,7 +10,6 @@ const LearnerSignup = () => {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
     password: '',
     confirmPassword: '',
     agreeTerms: false
@@ -46,11 +45,6 @@ const LearnerSignup = () => {
       newErrors.email = 'Email is invalid';
     }
 
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^[0-9]{10}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Phone number must be 10 digits';
-    }
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
@@ -85,14 +79,14 @@ const LearnerSignup = () => {
         password: formData.password,
         type: 'learner',
         firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone
+        lastName: formData.lastName
       };
 
       const result = await signup(userData);
 
       if (result.success) {
-        navigate('/');
+        // Redirect to verification sent page
+        navigate(`/auth/verification-sent?email=${encodeURIComponent(formData.email)}&role=learner`);
       } else {
         if (result.field) {
           setErrors({ [result.field]: result.error });
@@ -168,20 +162,6 @@ const LearnerSignup = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone">Phone Number</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="0412 345 678"
-                value={formData.phone}
-                onChange={handleChange}
-                className={errors.phone ? 'error' : ''}
-              />
-              {errors.phone && <span className="error-message">{errors.phone}</span>}
-            </div>
-
-            <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
                 type="password"
@@ -250,7 +230,7 @@ const LearnerSignup = () => {
         </div>
 
         <div className="auth-info">
-          <h2>Why Choose EAZYDRIVING?</h2>
+          <h2>Why Choose EEZYDRIVING?</h2>
           <ul className="info-list">
             <li>
               <div className="info-icon">✓</div>

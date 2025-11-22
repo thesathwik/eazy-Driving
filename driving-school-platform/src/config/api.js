@@ -53,6 +53,8 @@ export const API = {
     register: `${API_BASE_URL}/auth/register`,
     login: `${API_BASE_URL}/auth/login`,
     me: `${API_BASE_URL}/auth/me`,
+    verifyEmail: `${API_BASE_URL}/auth/verify-email`,
+    resendVerification: `${API_BASE_URL}/auth/resend-verification`,
   },
 
   // Instructor endpoints
@@ -73,13 +75,7 @@ export const API = {
   },
 
   // Booking endpoints
-  bookings: {
-    list: `${API_BASE_URL}/bookings`,
-    byId: (id) => `${API_BASE_URL}/bookings/${id}`,
-    create: `${API_BASE_URL}/bookings`,
-    update: (id) => `${API_BASE_URL}/bookings/${id}`,
-    cancel: (id) => `${API_BASE_URL}/bookings/${id}/cancel`,
-  },
+  bookings: `${API_BASE_URL}/bookings`,
 
   // Review endpoints
   reviews: {

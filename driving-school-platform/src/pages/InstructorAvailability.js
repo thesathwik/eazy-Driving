@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
-import { getInstructorById } from '../data/instructors';
+import { getHeaders } from '../config/api';
 import './InstructorAvailability.css';
 
 const InstructorAvailability = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const instructor = getInstructorById(id);
+
+  const [instructor, setInstructor] = useState(null);
+  const [instructorLoading, setInstructorLoading] = useState(true);
 
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const [availabilityData, setAvailabilityData] = useState([]);
@@ -28,6 +30,40 @@ const InstructorAvailability = () => {
     return `${displayHour}:00 ${period}`;
   };
 
+  // Fetch instructor data
+  useEffect(() => {
+    const fetchInstructor = async () => {
+      try {
+        setInstructorLoading(true);
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+        const response = await fetch(`${API_URL}/instructors/${id}`, {
+          headers: getHeaders(false)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          const transformedInstructor = {
+            ...data.data,
+            id: data.data._id,
+            name: `${data.data.user?.firstName} ${data.data.user?.lastName}`.trim(),
+            pricePerHour: data.data.pricing?.marketplaceLessonRate || 80
+          };
+          setInstructor(transformedInstructor);
+        }
+
+        setInstructorLoading(false);
+      } catch (err) {
+        console.error('Error fetching instructor:', err);
+        setInstructorLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchInstructor();
+    }
+  }, [id]);
+
   // Fetch availability data
   useEffect(() => {
     const fetchAvailability = async () => {
@@ -41,13 +77,17 @@ const InstructorAvailability = () => {
         const startDateStr = currentWeekStart.toISOString().split('T')[0];
         const endDateStr = weekEnd.toISOString().split('T')[0];
 
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/availability/instructor/${instructor.id}?startDate=${startDateStr}&endDate=${endDateStr}`
-        );
+        const apiUrl = `${process.env.REACT_APP_API_URL}/availability/instructor/${instructor.id}?startDate=${startDateStr}&endDate=${endDateStr}`;
+        console.log('Fetching availability from:', apiUrl);
+
+        const response = await fetch(apiUrl);
 
         if (response.ok) {
           const data = await response.json();
+          console.log('Availability data received:', data);
           setAvailabilityData(data.data || []);
+        } else {
+          console.error('Failed to fetch availability:', response.status, response.statusText);
         }
       } catch (err) {
         console.error('Error fetching availability:', err);
